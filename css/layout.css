@@ -76,6 +76,27 @@ h2 {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
+/* --- Rodapé --- */
+.page-footer {
+    width: 100%; /* Garante que ocupe toda a largura disponível */
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: var(--container-bg); /* Ou uma cor diferente para o rodapé */
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 0.9em;
+    border-radius: 0; /* Rodapés de página completa geralmente não têm bordas arredondadas */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra para o rodapé */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    box-sizing: border-box; /* Garante que padding não adicione largura extra */
+}
+
+.page-footer p {
+    margin: 0; /* Remove qualquer margem padrão do parágrafo que possa afetar o alinhamento */
+    padding: 0; /* Remove qualquer padding padrão do parágrafo */
+}
+
 /* --- Responsividade Básica --- */
 @media (max-width: 768px) {
     .container {
