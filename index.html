@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Engenharia de Prompt</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Painel de Engenharia de Prompt</h1>
+
+        <section class="prompt-form">
+            <h2>Salvar Novo Prompt</h2>
+            <input type="text" id="promptTitle" placeholder="Título do Prompt">
+            <textarea id="promptContent" placeholder="Cole a estrutura do prompt aqui..."></textarea>
+            <button id="savePromptBtn">Salvar Prompt</button>
+        </section>
+
+        <section class="prompt-list">
+            <h2>Meus Prompts Salvos</h2>
+            <div id="promptsContainer">
+                <p id="noPromptsMessage">Nenhum prompt salvo ainda. Salve um prompt acima!</p>
+            </div>
+        </section>
+
+        <section class="data-management">
+            <h2>Gerenciamento de Dados</h2>
+            <button id="exportDataBtn">Exportar Dados (JSON)</button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            <button id="importDataBtn">Importar Dados (JSON)</button>
+        </section>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

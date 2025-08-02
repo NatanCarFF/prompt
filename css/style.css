@@ -1,0 +1,215 @@
+/* painel-prompt/css/style.css */
+
+/* Reset básico e estilos gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1, h2 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 2.5em;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-top: 40px;
+}
+
+/* Estilos para formulários e inputs */
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 22px); /* Considerando padding e border */
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    background-color: #004085;
+}
+
+/* Estilos para a lista de prompts */
+#promptsContainer {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.prompt-card {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para espaçar título/conteúdo do botão */
+}
+
+.prompt-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #34495e;
+    font-size: 1.4em;
+    word-wrap: break-word; /* Quebra palavras longas */
+}
+
+.prompt-card pre {
+    background-color: #eaf1f7;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #d3e0ea;
+    white-space: pre-wrap; /* Mantém quebras de linha e envolve texto */
+    word-wrap: break-word;
+    font-size: 0.9em;
+    max-height: 200px; /* Limita a altura do prompt */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo for muito grande */
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.prompt-card button.copy-btn {
+    background-color: #28a745;
+    margin-top: auto; /* Empurra o botão para baixo */
+    align-self: flex-start; /* Alinha o botão à esquerda dentro do card */
+}
+
+.prompt-card button.copy-btn:hover {
+    background-color: #218838;
+}
+
+.prompt-card button.copy-btn:active {
+    background-color: #1e7e34;
+}
+
+/* Estilos para a mensagem de "nenhum prompt" */
+#noPromptsMessage {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    grid-column: 1 / -1; /* Ocupa todas as colunas no grid */
+    padding: 20px;
+    border: 1px dashed #ced4da;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* Estilos para feedback visual (Ex: "Copiado!") */
+.copied-message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1000;
+}
+
+.copied-message.show {
+    opacity: 1;
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+    .container {
+        margin: 15px auto;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 30px;
+    }
+
+    h2 {
+        font-size: 1.5em;
+        margin-top: 30px;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    #promptsContainer {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+
+    .prompt-card button.copy-btn {
+        width: auto; /* Reset para não ocupar 100% no card */
+        align-self: center; /* Centraliza o botão no card */
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+}
