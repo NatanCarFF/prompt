@@ -8,11 +8,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // --- Inicialização do Tema ---
     const savedTheme = ui.loadThemePreference();
-    ui.applyTheme(savedTheme); // Aplica o tema salvo (ou 'light' como padrão) ao carregar a página
+    ui.applyTheme(savedTheme);
 
     // --- Carregamento Otimizado de Marked.js ---
-    // Carrega a biblioteca Marked.js antecipadamente, mas sem bloquear a renderização inicial.
-    // Isso é útil para que o modo de visualização renderizado funcione imediatamente nos cards já salvos.
     try {
         await ui.loadMarkedJs();
         console.log('Marked.js carregado com sucesso.');
@@ -22,17 +20,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- Inicialização dos Listeners do Modal de Confirmação ---
-    ui.initConfirmationModalListeners(); // NOVO: Inicializa os listeners para os botões do modal
+    ui.initConfirmationModalListeners();
 
     // --- Carregamento e Renderização Inicial dos Prompts ---
+    // A variável 'prompts' aqui deve ser o array mais recente do storage.
     let prompts = storage.loadPrompts();
-    ui.renderPrompts(prompts);
+    ui.renderPrompts(prompts); // Renderiza a lista inicial
 
     // --- Event Listeners ---
 
     // Evento para salvar ou atualizar um prompt
     ui.elements.savePromptBtn.addEventListener('click', () => {
-        // Valida os campos antes de continuar
         if (!ui.validateForm()) {
             ui.showFeedbackMessage('Por favor, corrija os erros no formulário.', 'error');
             return;
@@ -42,13 +40,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const title = ui.elements.promptTitleInput.value.trim();
         const content = ui.elements.promptContentTextarea.value.trim();
         const tagsString = ui.elements.promptTagsInput.value.trim();
-        const tags = tagsString ? tagsString.split(',').map(tag => tag.trim().replace(/^#/, '')).filter(tag => tag !== '') : []; // Processa tags
+        const tags = tagsString ? tagsString.split(',').map(tag => tag.trim().replace(/^#/, '')).filter(tag => tag !== '') : [];
+
+        let currentPrompts; // Variável para armazenar a lista atualizada de prompts
 
         if (id) {
             // Modo de Edição: Atualiza prompt existente
             const updatedPrompt = { id, title, content, tags };
-            prompts = storage.updatePrompt(updatedPrompt); // storage.updatePrompt já retorna a lista atualizada
-            ui.renderPrompts(prompts, ui.elements.searchPromptsInput.value.trim()); // Re-renderiza a lista completa
+            // storage.updatePrompt já retorna a lista atualizada.
+            currentPrompts = storage.updatePrompt(updatedPrompt);
             ui.showFeedbackMessage('Prompt atualizado com sucesso!', 'success');
         } else {
             // Modo de Criação: Salva novo prompt
@@ -58,17 +58,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 content: content,
                 tags: tags
             };
-            prompts.push(newPrompt); // Adiciona o novo prompt ao array local
-            storage.savePrompts(prompts); // Salva o array atualizado no Local Storage
-            ui.addPromptToUI(newPrompt); // Adiciona e renderiza o novo prompt na UI (já faz renderPrompts)
+            // Carrega a lista atual, adiciona o novo e salva.
+            // Isso garante que 'prompts' no main.js e a lista salva no storage estejam sempre sincronizadas.
+            currentPrompts = storage.loadPrompts(); // Garante que você tenha a base mais recente
+            currentPrompts.push(newPrompt);
+            storage.savePrompts(currentPrompts);
             ui.showFeedbackMessage('Prompt salvo com sucesso!', 'success');
         }
-        ui.clearForm(); // Limpa os campos do formulário e redefine botões
+
+        // Sempre re-renderiza a UI com a lista atualizada, seja para edição ou criação
+        prompts = currentPrompts; // Atualiza a variável 'prompts' global do main.js
+        ui.renderPrompts(prompts, ui.elements.searchPromptsInput.value.trim());
+
+        ui.clearForm();
     });
 
     // Evento para cancelar a edição
     ui.elements.cancelEditBtn.addEventListener('click', () => {
-        ui.clearForm(); // Apenas limpa o formulário e reverte o estado dos botões
+        ui.clearForm();
         ui.showFeedbackMessage('Edição cancelada.', 'info');
     });
 
@@ -80,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Evento para importar dados (aciona o clique no input de arquivo oculto)
     ui.elements.importDataBtn.addEventListener('click', () => {
-        ui.elements.importFileInput.click(); // Simula o clique no input de arquivo
+        ui.elements.importFileInput.click();
     });
 
     // Evento quando um arquivo é selecionado para importação
@@ -104,17 +111,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Event Listener para Troca de Tema
     ui.elements.themeSelect.addEventListener('change', (event) => {
         const selectedTheme = event.target.value;
-        ui.applyTheme(selectedTheme); // Aplica o novo tema escolhido
+        ui.applyTheme(selectedTheme);
         ui.showFeedbackMessage(`Tema "${selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)}" aplicado!`);
     });
 
     // Event Listener para a Busca/Filtro
     let searchTimeout;
     ui.elements.searchPromptsInput.addEventListener('input', (event) => {
-        clearTimeout(searchTimeout); // Limpa o timeout anterior
+        clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             const searchTerm = event.target.value.trim();
-            ui.renderPrompts(prompts, searchTerm); // Re-renderiza com o filtro
-        }, 300); // Pequeno delay para evitar re-renderizar a cada tecla digitada
+            // Sempre usa a variável 'prompts' mais recente do main.js (que foi atualizada pelo save/update)
+            ui.renderPrompts(prompts, searchTerm);
+        }, 300);
     });
 });

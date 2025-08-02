@@ -34,6 +34,8 @@ const ui = (function() {
         confirmNoBtn: document.getElementById('confirmNoBtn')
     };
 
+    // Esta variável 'prompts' é o estado atual dos prompts que o UI deve exibir.
+    // Ela é atualizada exclusivamente pela função renderPrompts.
     let prompts = [];
     let currentDragTarget = null;
     const THEME_STORAGE_KEY = 'prompt_panel_theme';
@@ -221,6 +223,7 @@ const ui = (function() {
         const contentDisplay = document.createElement('pre');
         contentDisplay.className = 'prompt-content-display';
         const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY + prompt.id) || 'plain';
+        // Renderiza Markdown se o modo salvo for 'rendered' E marked.js estiver carregado
         if (savedViewMode === 'rendered' && typeof marked !== 'undefined') {
             contentDisplay.innerHTML = marked.parse(prompt.content);
             contentDisplay.classList.add('markdown-rendered');
@@ -259,12 +262,13 @@ const ui = (function() {
         deleteButton.innerHTML = '<i class="icon-trash"></i> Excluir';
         deleteButton.addEventListener('click', (e) => {
             e.stopPropagation();
-            // CHAMA O NOVO MODAL DE CONFIRMAÇÃO
             showConfirmationModal(`Tem certeza que deseja excluir o prompt "${prompt.title}"? Esta ação é irreversível!`)
                 .then(confirmed => {
                     if (confirmed) {
+                        // A função deletePrompt do storage já retorna a lista atualizada.
+                        // Passamos ela para renderPrompts para que a UI seja totalmente atualizada.
                         const updatedPrompts = storage.deletePrompt(prompt.id);
-                        renderPrompts(updatedPrompts, elements.searchPromptsInput.value.trim());
+                        renderPrompts(updatedPrompts, elements.searchPromptsInput.value.trim()); // Chamada correta aqui
                         showFeedbackMessage('Prompt excluído com sucesso!', 'success');
                     } else {
                         showFeedbackMessage('Exclusão cancelada.', 'info');
@@ -306,8 +310,11 @@ const ui = (function() {
      * @param {string} searchTerm - Termo de busca para filtrar.
      */
     function renderPrompts(currentPrompts, searchTerm = '') {
+        // ATUALIZA O ARRAY LOCAL 'prompts' COM A LISTA MAIS RECENTE
+        // Esta é a única forma de 'prompts' ser atualizada no módulo UI.
         prompts = currentPrompts;
-        elements.promptsContainer.innerHTML = '';
+
+        elements.promptsContainer.innerHTML = ''; // LIMPA O CONTEÚDO ANTES DE RENDERIZAR
 
         const filteredPrompts = prompts.filter(prompt => {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -324,21 +331,29 @@ const ui = (function() {
                 : 'Nenhum prompt corresponde à sua busca.';
         } else {
             elements.noPromptsMessage.style.display = 'none';
-            filteredPrompts.forEach(prompt => {
-                const card = createPromptCard(prompt);
-                elements.promptsContainer.appendChild(card);
+            // Garante que o Marked.js esteja carregado antes de tentar renderizar Markdown
+            // Isso evita um erro se a página carregar rápido e um card com "rendered" já estiver no localStorage
+            loadMarkedJs().then(() => {
+                filteredPrompts.forEach(prompt => {
+                    const card = createPromptCard(prompt);
+                    elements.promptsContainer.appendChild(card);
+                });
+            }).catch(error => {
+                console.error("Erro ao renderizar prompts com Markdown:", error);
+                // Renderiza sem Markdown se houver erro ao carregar a lib
+                filteredPrompts.forEach(prompt => {
+                    const card = createPromptCard(prompt); // createPromptCard tem fallback para plain text
+                    elements.promptsContainer.appendChild(card);
+                });
             });
         }
     }
 
     /**
-     * Adiciona um novo prompt à lista e o renderiza na UI.
-     * @param {object} newPrompt - O novo objeto prompt a ser adicionado.
+     * A função addPromptToUI foi removida.
+     * A UI agora é sempre atualizada chamando renderPrompts com a lista completa do Local Storage,
+     * garantindo a consistência e evitando duplicatas.
      */
-    function addPromptToUI(newPrompt) {
-        prompts.push(newPrompt);
-        renderPrompts(prompts, elements.searchPromptsInput.value.trim());
-    }
 
     /**
      * Configura o formulário para o modo de edição com os dados de um prompt.
@@ -546,7 +561,6 @@ const ui = (function() {
     return {
         elements,
         renderPrompts,
-        addPromptToUI,
         clearForm,
         generateUniqueId,
         showFeedbackMessage,
@@ -555,6 +569,6 @@ const ui = (function() {
         validateForm,
         editPrompt,
         loadMarkedJs,
-        initConfirmationModalListeners // EXPÕE PARA main.js
+        initConfirmationModalListeners
     };
 })();
