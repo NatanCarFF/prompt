@@ -32,14 +32,34 @@
         </div>
 
         <section class="prompt-form">
-            <h2><i class="icon-plus-circle"></i> Salvar Novo Prompt</h2>
-            <input type="text" id="promptTitle" placeholder="Título do Prompt">
-            <textarea id="promptContent" placeholder="Cole a estrutura do prompt aqui..."></textarea>
-            <button id="savePromptBtn"><i class="icon-save"></i> Salvar Prompt</button>
+            <h2><i class="icon-plus-circle"></i> Salvar / Editar Prompt</h2>
+            <input type="hidden" id="promptId">
+            <div class="input-group">
+                <input type="text" id="promptTitle" placeholder="Título do Prompt">
+                <span class="error-message" id="titleError"></span>
+            </div>
+            <div class="input-group">
+                <input type="text" id="promptTags" placeholder="Tags (separadas por vírgula, ex: #marketing, #código)">
+                <span class="error-message" id="tagsError"></span>
+            </div>
+            <div class="input-group">
+                <textarea id="promptContent" placeholder="Cole a estrutura do prompt aqui..."></textarea>
+                <span class="error-message" id="contentError"></span>
+            </div>
+            <div class="form-buttons">
+                <button id="savePromptBtn"><i class="icon-save"></i> Salvar Prompt</button>
+                <button id="cancelEditBtn" class="secondary-btn" style="display: none;"><i class="icon-times"></i> Cancelar Edição</button>
+            </div>
         </section>
 
         <section class="prompt-list">
-            <h2><i class="icon-list"></i> Meus Prompts Salvos</h2>
+            <div class="list-header">
+                <h2><i class="icon-list"></i> Meus Prompts Salvos</h2>
+                <div class="search-bar">
+                    <i class="icon-search"></i>
+                    <input type="text" id="searchPrompts" placeholder="Buscar por título, conteúdo ou tags...">
+                </div>
+            </div>
             <div id="promptsContainer">
                 <p id="noPromptsMessage"><i class="icon-info-circle"></i> Nenhum prompt salvo ainda. Salve um prompt acima!</p>
             </div>
@@ -53,7 +73,9 @@
         </section>
     </div>
 
-    <div class="copied-message"></div> <script src="js/storage.js"></script>
+    <div class="feedback-message" id="feedbackMessage"></div>
+
+    <script src="js/storage.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 </body>

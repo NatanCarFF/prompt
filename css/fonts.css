@@ -1,45 +1,9 @@
 /* painel-prompt/css/fonts.css */
 
-/* --- Importação de Fontes --- */
-/* Exemplo de importação do Google Fonts: 'Poppins' para texto e 'JetBrains Mono' para código. */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+/* ... (código existente) ... */
 
-/* Define as variáveis CSS para as fontes, facilitando o uso em style.css */
-:root {
-    --font-body: 'Poppins', sans-serif;
-    --font-code: 'JetBrains Mono', monospace;
-}
-
-/* --- Ícones Personalizados (Simulação) --- */
-/*
-   Para este projeto, vamos simular ícones usando um método simples.
-   Em um projeto real, você usaria uma biblioteca de ícones como Font Awesome,
-   Material Icons ou criar sua própria fonte de ícones.
-
-   Aqui, estamos usando uma abordagem que permite definir um "ícone"
-   através de um pseudo-elemento ::before e um `content` com um caractere
-   ou código unicode que se assemelhe a um ícone.
-   Isso evita a necessidade de baixar e configurar bibliotecas completas de ícones
-   neste exemplo.
-*/
-
-[class^="icon-"], [class*=" icon-"] {
-    /* Estilos base para todos os ícones */
-    font-family: 'FontAwesomeMock', sans-serif; /* Usaremos uma família de fontes que não existe, apenas para demonstração */
-    font-weight: 900; /* Para simular o estilo de ícones Font Awesome solid */
-    font-style: normal;
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    margin-right: 8px; /* Espaçamento entre o ícone e o texto */
-}
-
-/* --- Definições de Ícones Específicos --- */
-/* Usamos códigos Unicode simples para simular ícones.
-   Em uma biblioteca real, seriam códigos específicos para cada ícone.
-   Estes são apenas para fins de demonstração visual no projeto. */
+/* --- Definições de Ícones Específicos (NOVOS ÍCONES ADICIONADOS) --- */
+/* Certifique-se de que os ícones existentes também estejam aqui */
 
 .icon-sparkles::before {
     content: '\2728'; /* Sparkles */
@@ -87,7 +51,37 @@
 }
 
 .icon-copy::before {
-    content: '\1F4C4'; /* Page facing up */
+    content: '\1F4C4'; /* Page facing up (Document) */
+    font-size: 1.1em;
+}
+
+.icon-search::before {
+    content: '\1F50D'; /* Magnifying Glass */
+    font-size: 1.1em;
+}
+
+.icon-edit::before {
+    content: '\270F'; /* Pencil (Edit) */
+    font-size: 1.1em;
+}
+
+.icon-trash::before {
+    content: '\1F5D1'; /* Wastebasket (Delete) */
+    font-size: 1.1em;
+}
+
+.icon-eye::before {
+    content: '\1F441'; /* Eye */
+    font-size: 1.1em;
+}
+
+.icon-times::before {
+    content: '\2715'; /* Multiplication X (Cancel) */
+    font-size: 1.1em;
+}
+
+.icon-check::before {
+    content: '\2713'; /* Check Mark */
     font-size: 1.1em;
 }
 

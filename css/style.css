@@ -17,19 +17,35 @@
     --button-bg: #007bff; /* Cor de fundo dos botões primários */
     --button-hover-bg: #0056b3; /* Cor de hover dos botões primários */
     --button-active-bg: #004085; /* Cor de active dos botões primários */
+    --secondary-button-bg: #6c757d; /* Cor de fundo dos botões secundários */
+    --secondary-button-hover-bg: #5a6268;
+    --secondary-button-active-bg: #4c5257;
     --card-bg: #ffffff; /* Cor de fundo dos cards de prompt */
     --card-border: #dcdcdc; /* Cor da borda dos cards de prompt */
-    --card-shadow: rgba(0, 0, 0, 0.06); /* Sombra dos cards */
+    --card-shadow: rgba(0, 0, 0, 0.08); /* Sombra dos cards */
     --pre-bg: #eaf1f7; /* Cor de fundo do bloco de código (pre) */
     --pre-border: #d3e0ea; /* Cor da borda do bloco de código (pre) */
     --copy-btn-bg: #28a745; /* Cor de fundo do botão de copiar */
     --copy-btn-hover-bg: #218838; /* Cor de hover do botão de copiar */
     --copy-btn-active-bg: #1e7e34; /* Cor de active do botão de copiar */
+    --edit-btn-bg: #ffc107; /* Cor de fundo do botão de editar */
+    --edit-btn-hover-bg: #e0a800;
+    --edit-btn-active-bg: #cc9900;
+    --delete-btn-bg: #dc3545; /* Cor de fundo do botão de deletar */
+    --delete-btn-hover-bg: #c82333;
+    --delete-btn-active-bg: #bd2130;
     --no-prompts-text: #6c757d; /* Cor do texto "nenhum prompt" */
     --no-prompts-border: #ced4da; /* Cor da borda da mensagem "nenhum prompt" */
     --no-prompts-bg: #f8f9fa; /* Cor de fundo da mensagem "nenhum prompt" */
-    --feedback-bg: #333; /* Cor de fundo da mensagem de feedback */
-    --feedback-text: white; /* Cor do texto da mensagem de feedback */
+    --feedback-info-bg: #333; /* Cor de fundo da mensagem de feedback info */
+    --feedback-info-text: white; /* Cor do texto da mensagem de feedback info */
+    --feedback-success-bg: #28a745; /* Cor de fundo da mensagem de feedback sucesso */
+    --feedback-success-text: white;
+    --feedback-error-bg: #dc3545; /* Cor de fundo da mensagem de feedback erro */
+    --feedback-error-text: white;
+    --error-message-color: #dc3545; /* Cor do texto de mensagem de erro de validação */
+    --tag-bg: #e2e6ea; /* Cor de fundo das tags */
+    --tag-text: #6c757d; /* Cor do texto das tags */
 }
 
 
@@ -72,16 +88,16 @@ h1, h2 {
 
 h1 {
     font-size: 2.5em;
-    padding-bottom: 0; /* Removido padding bottom para ficar junto ao border bottom do header */
-    margin-bottom: 0; /* Removido margin bottom para ficar junto ao border bottom do header */
-    flex-grow: 1; /* Ocupa o espaço disponível */
+    padding-bottom: 0;
+    margin-bottom: 0;
+    flex-grow: 1;
 }
 
 h2 {
     font-size: 1.8em;
     margin-top: 40px;
     margin-bottom: 25px;
-    text-align: left; /* Alinhamento para títulos de seção */
+    text-align: left;
 }
 
 /* --- Seleção de Tema --- */
@@ -89,7 +105,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px; /* Espaço em telas menores */
+    margin-top: 10px;
 }
 
 .theme-selector label {
@@ -105,9 +121,9 @@ h2 {
     color: var(--text-color);
     font-size: 0.95em;
     cursor: pointer;
-    appearance: none; /* Remove a seta padrão do select */
-    -webkit-appearance: none; /* Para Webkit browsers */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Seta customizada */
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 12px;
@@ -122,26 +138,27 @@ h2 {
 
 
 /* --- Estilos para Formulários e Inputs --- */
-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: var(--section-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+.prompt-form {
+    display: flex;
+    flex-direction: column; /* Organiza os elementos do formulário em coluna */
+    gap: 15px; /* Espaçamento entre os campos */
+}
+
+.input-group {
+    position: relative; /* Para posicionar a mensagem de erro */
+    margin-bottom: 0; /* Removendo margin-bottom do input individual */
 }
 
 input[type="text"],
 textarea {
     width: calc(100% - 22px);
     padding: 12px;
-    margin-bottom: 15px;
     border: 1px solid var(--input-border);
     border-radius: 6px;
     font-size: 1em;
     box-sizing: border-box;
-    background-color: var(--container-bg); /* Input bg color */
-    color: var(--text-color); /* Input text color */
+    background-color: var(--container-bg);
+    color: var(--text-color);
     transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -155,19 +172,49 @@ textarea:focus {
 textarea {
     min-height: 120px;
     resize: vertical;
-    font-family: var(--font-code); /* Fonte monoespaçada para o conteúdo do prompt */
+    font-family: var(--font-code);
+}
+
+/* Estilo para erro de validação */
+.error-message {
+    color: var(--error-message-color);
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block; /* Garante que a mensagem ocupe sua própria linha */
+    height: 1.2em; /* Altura fixa para evitar pulos de layout */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.error-message.show {
+    opacity: 1;
+}
+
+/* Estilo para input com erro */
+input.error, textarea.error {
+    border-color: var(--error-message-color) !important;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Alinha botões à esquerda */
+    margin-top: 10px;
 }
 
 button {
     background-color: var(--button-bg);
-    color: var(--feedback-text); /* Cor do texto do botão (geralmente branco) */
+    color: var(--feedback-text);
     padding: 12px 25px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 1.05em;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Espaçamento entre ícone e texto */
 }
 
 button:hover {
@@ -178,11 +225,75 @@ button:active {
     background-color: var(--button-active-bg);
 }
 
+button.secondary-btn {
+    background-color: var(--secondary-button-bg);
+}
+
+button.secondary-btn:hover {
+    background-color: var(--secondary-button-hover-bg);
+}
+
+button.secondary-btn:active {
+    background-color: var(--secondary-button-active-bg);
+}
+
+/* Estilos para o botão de salvar no modo de edição */
+button#savePromptBtn.edit-mode {
+    background-color: var(--edit-btn-bg); /* Mudar cor para indicar modo de edição */
+}
+button#savePromptBtn.edit-mode:hover {
+    background-color: var(--edit-btn-hover-bg);
+}
+button#savePromptBtn.edit-mode:active {
+    background-color: var(--edit-btn-active-bg);
+}
+
+
+/* --- Barra de Busca --- */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.list-header h2 {
+    margin: 0; /* Reset de margem para o h2 dentro do header */
+    flex-grow: 1; /* Permite que o h2 ocupe espaço */
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1; /* Permite que o search bar ocupe espaço */
+    max-width: 350px; /* Limita a largura em telas maiores */
+    margin-left: 20px; /* Espaçamento do h2 */
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    width: auto; /* Anula o width 100% de cima para flexbox */
+    margin-bottom: 0; /* Remove a margem padrão */
+    padding-left: 40px; /* Espaço para o ícone de lupa */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 20px;
+}
+/* Altera a cor do SVG de busca dinamicamente com o tema */
+.search-bar input[type="text"] {
+    filter: var(--svg-icon-filter, none); /* Variável CSS para filtro SVG */
+}
+
+
 /* --- Estilos para a Lista de Prompts --- */
 #promptsContainer {
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    min-height: 150px; /* Altura mínima para visualização */
 }
 
 .prompt-card {
@@ -195,7 +306,18 @@ button:active {
     flex-direction: column;
     justify-content: space-between;
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Para botões de ação absolutos */
+
+    /* Drag and Drop */
+    cursor: grab;
+    user-select: none; /* Previne seleção de texto ao arrastar */
 }
+
+.prompt-card.dragging {
+    opacity: 0.5;
+    border: 2px dashed var(--button-bg);
+}
+
 
 .prompt-card h3 {
     margin-top: 0;
@@ -205,26 +327,66 @@ button:active {
     word-wrap: break-word;
 }
 
-.prompt-card pre {
+.prompt-card .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+    min-height: 25px; /* Para manter o layout mesmo sem tags */
+}
+
+.prompt-card .tag {
+    background-color: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: 600;
+    white-space: nowrap; /* Não quebra linha dentro da tag */
+}
+
+.prompt-card .prompt-content-display {
     background-color: var(--pre-bg);
     padding: 15px;
     border-radius: 8px;
     border: 1px solid var(--pre-border);
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* Mantém quebras de linha e envolve texto */
     word-wrap: break-word;
     font-size: 0.9em;
     max-height: 200px;
     overflow-y: auto;
     margin-bottom: 15px;
-    color: var(--heading-color); /* Usando heading-color para o texto de código */
-    font-family: var(--font-code); /* Fonte monoespaçada para o conteúdo do prompt */
+    color: var(--heading-color);
+    font-family: var(--font-code);
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.prompt-card .prompt-content-display.markdown-rendered {
+    /* Estilos adicionais para o conteúdo Markdown renderizado, se necessário */
+    font-family: var(--font-body); /* Volta para fonte de corpo para markdown */
+    line-height: 1.5;
+}
+
+/* Botões de Ação no Card */
+.prompt-card .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px; /* Espaço do conteúdo */
+    flex-wrap: wrap;
+    gap: 8px; /* Espaçamento entre os botões */
+}
+
+.prompt-card .card-actions button {
+    padding: 8px 15px; /* Botões menores no card */
+    font-size: 0.95em;
+    margin-right: 0; /* Reseta a margem padrão do botão */
 }
 
 .prompt-card button.copy-btn {
     background-color: var(--copy-btn-bg);
-    margin-top: auto;
-    align-self: flex-start;
+    flex-grow: 1; /* Ocupa espaço disponível */
+    margin-top: 0; /* Reseta margin-top: auto */
 }
 
 .prompt-card button.copy-btn:hover {
@@ -234,6 +396,45 @@ button:active {
 .prompt-card button.copy-btn:active {
     background-color: var(--copy-btn-active-bg);
 }
+
+.prompt-card button.edit-btn {
+    background-color: var(--edit-btn-bg);
+}
+
+.prompt-card button.edit-btn:hover {
+    background-color: var(--edit-btn-hover-bg);
+}
+
+.prompt-card button.edit-btn:active {
+    background-color: var(--edit-btn-active-bg);
+}
+
+.prompt-card button.delete-btn {
+    background-color: var(--delete-btn-bg);
+}
+
+.prompt-card button.delete-btn:hover {
+    background-color: var(--delete-btn-hover-bg);
+}
+
+.prompt-card button.delete-btn:active {
+    background-color: var(--delete-btn-active-bg);
+}
+
+.prompt-card .view-toggle {
+    background-color: var(--secondary-button-bg);
+    color: var(--feedback-text);
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-left: auto; /* Empurra para a direita */
+    transition: background-color 0.3s ease;
+}
+.prompt-card .view-toggle:hover {
+    background-color: var(--secondary-button-hover-bg);
+}
+
 
 /* --- Estilos para a Mensagem "Nenhum Prompt" --- */
 #noPromptsMessage {
@@ -248,14 +449,14 @@ button:active {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-/* --- Estilos para Feedback Visual (Ex: "Copiado!") --- */
-.copied-message {
+/* --- Estilos para Feedback Visual (Global) --- */
+.feedback-message {
     position: fixed;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--feedback-bg);
-    color: var(--feedback-text);
+    background-color: var(--feedback-info-bg);
+    color: var(--feedback-info-text);
     padding: 10px 20px;
     border-radius: 8px;
     opacity: 0;
@@ -263,9 +464,21 @@ button:active {
     z-index: 1000;
 }
 
-.copied-message.show {
+.feedback-message.show {
     opacity: 1;
 }
+
+/* Estilos para tipos específicos de feedback */
+.feedback-message.success {
+    background-color: var(--feedback-success-bg);
+    color: var(--feedback-success-text);
+}
+
+.feedback-message.error {
+    background-color: var(--feedback-error-bg);
+    color: var(--feedback-error-text);
+}
+
 
 /* --- Responsividade Básica --- */
 @media (max-width: 768px) {
@@ -276,21 +489,21 @@ button:active {
 
     .header {
         flex-direction: column;
-        align-items: flex-start; /* Alinha itens à esquerda em telas menores */
+        align-items: flex-start;
     }
 
     .header h1 {
-        text-align: left; /* Alinha título à esquerda */
-        margin-bottom: 15px; /* Adiciona espaço abaixo do título */
+        text-align: left;
+        margin-bottom: 15px;
     }
 
     .theme-selector {
-        width: 100%; /* Ocupa largura total */
-        justify-content: flex-start; /* Alinha à esquerda */
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .theme-selector select {
-        flex-grow: 1; /* Ocupa o espaço restante */
+        flex-grow: 1;
     }
 
     h1 {
@@ -302,10 +515,14 @@ button:active {
         margin-top: 30px;
     }
 
+    .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
     button {
         width: 100%;
-        margin-bottom: 10px;
-        margin-right: 0; /* Remove margem direita em botões full-width */
+        margin-right: 0;
     }
 
     /* Ajuste para botões de exportar/importar ficarem empilhados */
@@ -317,14 +534,38 @@ button:active {
         margin-bottom: 0;
     }
 
+    .list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .list-header h2 {
+        width: 100%; /* Ocupa a linha toda */
+        text-align: left;
+    }
+
+    .search-bar {
+        margin-left: 0; /* Remove margem lateral em telas pequenas */
+        max-width: 100%; /* Ocupa largura total */
+        width: 100%;
+    }
 
     #promptsContainer {
         grid-template-columns: 1fr;
     }
 
-    .prompt-card button.copy-btn {
-        width: auto;
-        align-self: center;
+    .prompt-card .card-actions {
+        flex-direction: column;
+        align-items: stretch; /* Estica os botões para largura total */
+    }
+
+    .prompt-card .card-actions button,
+    .prompt-card .view-toggle {
+        width: 100%;
+        margin-left: 0;
+        text-align: center;
+        margin-top: 5px;
     }
 }
 

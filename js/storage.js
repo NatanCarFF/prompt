@@ -1,114 +1,178 @@
 // painel-prompt/js/storage.js
 
 /**
- * Módulo para gerenciar a persistência de dados (prompts) no Local Storage
- * e funcionalidades de importação/exportação JSON.
+ * Módulo para gerenciar o armazenamento e recuperação de dados de prompts
+ * usando o Local Storage do navegador.
  */
 const storage = (function() {
-    const STORAGE_KEY = 'prompt_panel_data'; // Chave para armazenar os dados no Local Storage
+    const LOCAL_STORAGE_KEY = 'prompt_engineering_panel_prompts';
 
     /**
-     * Carrega os prompts salvos do Local Storage.
-     * @returns {Array} Um array de objetos de prompt.
+     * Carrega os prompts do Local Storage.
+     * @returns {Array} Um array de objetos prompt, ou um array vazio se nenhum prompt for encontrado.
      */
     function loadPrompts() {
         try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
+            const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+            // Retorna os dados parseados. Se for nulo ou inválido, retorna um array vazio.
+            // Garante que o ID e a ordem sejam consistentes.
+            return data ? JSON.parse(data).map(prompt => ({
+                id: prompt.id,
+                title: prompt.title,
+                content: prompt.content,
+                // Garante que 'tags' sempre exista, mesmo que vazia, e seja um array
+                tags: Array.isArray(prompt.tags) ? prompt.tags : (typeof prompt.tags === 'string' ? prompt.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [])
+            })) : [];
         } catch (e) {
             console.error("Erro ao carregar prompts do Local Storage:", e);
-            // Em caso de erro (ex: JSON malformado), retorna um array vazio
+            // Em caso de erro, limpa o Local Storage para evitar futuros problemas
+            // e retorna um array vazio.
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
             return [];
         }
     }
 
     /**
-     * Salva um array de prompts no Local Storage.
-     * @param {Array} prompts - O array de objetos de prompt a ser salvo.
+     * Salva o array de prompts no Local Storage.
+     * @param {Array} prompts - O array de objetos prompt a ser salvo.
      */
     function savePrompts(prompts) {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts));
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(prompts));
         } catch (e) {
             console.error("Erro ao salvar prompts no Local Storage:", e);
-            alert("Não foi possível salvar os prompts. O Local Storage pode estar cheio ou inacessível.");
+            // Poderia adicionar uma mensagem de feedback ao usuário aqui
         }
     }
 
     /**
-     * Exporta todos os prompts salvos para um arquivo JSON.
+     * Exporta os prompts salvos para um arquivo JSON.
      */
     function exportData() {
         const prompts = loadPrompts();
-        if (prompts.length === 0) {
-            alert("Não há prompts para exportar!");
-            return;
-        }
-
-        const dataStr = JSON.stringify(prompts, null, 2); // Formata o JSON com indentação de 2 espaços
-        const blob = new Blob([dataStr], { type: 'application/json' });
+        const dataStr = JSON.stringify(prompts, null, 2); // null, 2 para formatação bonita
+        const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'prompts_export.json'; // Nome do arquivo a ser baixado
-        document.body.appendChild(a); // Necessário para Firefox
+        a.download = 'prompts_export.json';
+        document.body.appendChild(a);
         a.click();
-
-        document.body.removeChild(a); // Limpa o elemento <a>
+        document.body.removeChild(a);
         URL.revokeObjectURL(url); // Libera o URL do objeto
     }
 
     /**
-     * Importa dados de um arquivo JSON.
-     * Sobrescreve os prompts existentes com os dados do arquivo.
-     * @param {File} file - O objeto File do arquivo JSON a ser importado.
-     * @returns {Promise<Array>} Uma promessa que resolve com os novos prompts ou rejeita em caso de erro.
+     * Importa prompts de um arquivo JSON.
+     * @param {File} file - O objeto File selecionado pelo usuário.
+     * @returns {Promise<Array>} Uma Promise que resolve com o array de prompts importados.
      */
     function importData(file) {
         return new Promise((resolve, reject) => {
             if (!file) {
-                reject(new Error("Nenhum arquivo selecionado."));
-                return;
+                return reject(new Error("Nenhum arquivo selecionado."));
             }
             if (file.type !== "application/json") {
-                reject(new Error("Por favor, selecione um arquivo JSON válido."));
-                return;
+                return reject(new Error("Por favor, selecione um arquivo JSON válido."));
             }
 
             const reader = new FileReader();
 
-            reader.onload = function(event) {
+            reader.onload = (event) => {
                 try {
                     const importedPrompts = JSON.parse(event.target.result);
-                    // Opcional: Validar a estrutura dos prompts importados aqui
+
+                    // Validação básica dos dados importados
                     if (!Array.isArray(importedPrompts)) {
                         throw new Error("O arquivo JSON não contém um array de prompts válido.");
                     }
-                    // Você pode adicionar mais validações, como verificar se cada objeto tem 'id', 'title', 'content'
 
-                    savePrompts(importedPrompts); // Salva os prompts importados
-                    resolve(importedPrompts); // Retorna os prompts para serem exibidos na UI
+                    // Mapeia para garantir a estrutura correta (com tags) e remover duplicatas por ID
+                    const existingPrompts = loadPrompts();
+                    const newPromptsMap = new Map();
+
+                    // Adiciona os prompts existentes ao mapa
+                    existingPrompts.forEach(p => newPromptsMap.set(p.id, p));
+
+                    // Adiciona/atualiza os prompts importados
+                    importedPrompts.forEach(p => {
+                        if (p && typeof p.id === 'string' && typeof p.title === 'string' && typeof p.content === 'string') {
+                             // Garante que 'tags' seja um array
+                            p.tags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? p.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : []);
+                            newPromptsMap.set(p.id, p);
+                        } else {
+                            console.warn("Prompt inválido encontrado no arquivo JSON importado, ignorando:", p);
+                        }
+                    });
+
+                    const finalPrompts = Array.from(newPromptsMap.values());
+                    savePrompts(finalPrompts);
+                    resolve(finalPrompts);
+
                 } catch (e) {
-                    console.error("Erro ao processar arquivo JSON:", e);
-                    reject(new Error("Erro ao ler ou analisar o arquivo JSON: " + e.message));
+                    console.error("Erro ao analisar/processar arquivo JSON:", e);
+                    reject(new Error(`Erro ao importar o arquivo: ${e.message}`));
                 }
             };
 
-            reader.onerror = function(error) {
-                console.error("Erro ao ler o arquivo:", error);
+            reader.onerror = () => {
                 reject(new Error("Erro ao ler o arquivo."));
             };
 
-            reader.readAsText(file); // Lê o conteúdo do arquivo como texto
+            reader.readAsText(file);
         });
     }
 
-    // Retorna as funções públicas do módulo
+    /**
+     * Remove um prompt do Local Storage pelo seu ID.
+     * @param {string} promptId - O ID do prompt a ser removido.
+     * @returns {Array} O array de prompts atualizado.
+     */
+    function deletePrompt(promptId) {
+        let prompts = loadPrompts();
+        prompts = prompts.filter(p => p.id !== promptId);
+        savePrompts(prompts);
+        return prompts;
+    }
+
+    /**
+     * Atualiza um prompt existente no Local Storage.
+     * @param {object} updatedPrompt - O objeto prompt atualizado.
+     * @returns {Array} O array de prompts atualizado.
+     */
+    function updatePrompt(updatedPrompt) {
+        let prompts = loadPrompts();
+        const index = prompts.findIndex(p => p.id === updatedPrompt.id);
+        if (index !== -1) {
+            // Garante que 'tags' seja um array
+            updatedPrompt.tags = Array.isArray(updatedPrompt.tags) ? updatedPrompt.tags : (typeof updatedPrompt.tags === 'string' ? updatedPrompt.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : []);
+            prompts[index] = updatedPrompt;
+            savePrompts(prompts);
+        }
+        return prompts;
+    }
+
+    /**
+     * Reordena os prompts no Local Storage.
+     * @param {Array<string>} orderedIds - Um array de IDs na nova ordem.
+     * @returns {Array} O array de prompts reordenado.
+     */
+    function reorderPrompts(orderedIds) {
+        let prompts = loadPrompts();
+        const promptMap = new Map(prompts.map(p => [p.id, p]));
+        const reordered = orderedIds.map(id => promptMap.get(id)).filter(Boolean); // Filtra por prompts existentes
+        savePrompts(reordered);
+        return reordered;
+    }
+
+
     return {
         loadPrompts,
         savePrompts,
         exportData,
-        importData
+        importData,
+        deletePrompt, // Novo: função para excluir prompt
+        updatePrompt, // Novo: função para atualizar prompt
+        reorderPrompts // Novo: função para reordenar prompts
     };
 })();
