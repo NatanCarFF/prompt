@@ -46,6 +46,12 @@
     --error-message-color: #dc3545; /* Cor do texto de mensagem de erro de validação */
     --tag-bg: #e2e6ea; /* Cor de fundo das tags */
     --tag-text: #6c757d; /* Cor do texto das tags */
+
+    /* NOVAS VARIÁVEIS PARA O MODAL */
+    --modal-backdrop-bg: rgba(0, 0, 0, 0.6); /* Fundo escuro do modal */
+    --modal-content-bg: var(--container-bg); /* Fundo do balão do modal (usa cor do container) */
+    --modal-border: var(--border-color); /* Borda do balão do modal */
+    --modal-text-color: var(--text-color); /* Cor do texto do modal */
 }
 
 
@@ -59,6 +65,12 @@ body {
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para mudança de tema */
 }
+
+/* Classe para desabilitar o scroll da página quando um modal está aberto */
+body.modal-open {
+    overflow: hidden;
+}
+
 
 .container {
     max-width: 900px;
@@ -204,7 +216,7 @@ input.error, textarea.error {
 
 button {
     background-color: var(--button-bg);
-    color: var(--feedback-text);
+    color: var(--feedback-text); /* Nota: feedback-text não existe, deveria ser white ou uma variável de texto de botão */
     padding: 12px 25px;
     border: none;
     border-radius: 6px;
@@ -227,6 +239,7 @@ button:active {
 
 button.secondary-btn {
     background-color: var(--secondary-button-bg);
+    color: white; /* Cor do texto para botões secundários */
 }
 
 button.secondary-btn:hover {
@@ -423,7 +436,7 @@ button#savePromptBtn.edit-mode:active {
 
 .prompt-card .view-toggle {
     background-color: var(--secondary-button-bg);
-    color: var(--feedback-text);
+    color: var(--feedback-text); /* Nota: feedback-text não existe, deveria ser white ou uma variável de texto de botão */
     padding: 8px 15px;
     border-radius: 6px;
     font-size: 0.9em;
@@ -477,6 +490,71 @@ button#savePromptBtn.edit-mode:active {
 .feedback-message.error {
     background-color: var(--feedback-error-bg);
     color: var(--feedback-error-text);
+}
+
+
+/* --- NOVOS ESTILOS PARA O MODAL DE CONFIRMAÇÃO PERSONALIZADO --- */
+
+.custom-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-backdrop-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Acima de tudo */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.custom-modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.custom-modal-content {
+    background-color: var(--modal-content-bg);
+    color: var(--modal-text-color);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--modal-border);
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    transform: translateY(-20px); /* Começa um pouco acima */
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-modal-backdrop.show .custom-modal-content {
+    transform: translateY(0); /* Desliza para a posição final */
+    opacity: 1;
+}
+
+#confirmationMessage {
+    font-size: 1.2em;
+    margin-bottom: 25px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--modal-text-color); /* Garante que o texto se adapte ao tema */
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Para botões em telas menores */
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    min-width: 120px; /* Garante tamanho mínimo para os botões */
 }
 
 
@@ -580,5 +658,20 @@ button#savePromptBtn.edit-mode:active {
 
     h1 {
         font-size: 1.8em;
+    }
+
+    /* Responsividade para o modal */
+    .custom-modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-buttons button {
+        width: 100%;
     }
 }

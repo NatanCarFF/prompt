@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         ui.showFeedbackMessage('Erro ao carregar o renderizador de Markdown. A visualização renderizada pode não funcionar.', 'error');
     }
 
+    // --- Inicialização dos Listeners do Modal de Confirmação ---
+    ui.initConfirmationModalListeners(); // NOVO: Inicializa os listeners para os botões do modal
+
     // --- Carregamento e Renderização Inicial dos Prompts ---
     let prompts = storage.loadPrompts();
     ui.renderPrompts(prompts);

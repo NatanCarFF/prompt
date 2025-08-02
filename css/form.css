@@ -1,0 +1,135 @@
+/* painel-prompt/css/form.css */
+
+/* --- Estilos para Formulários e Inputs --- */
+.prompt-form {
+    display: flex;
+    flex-direction: column; /* Organiza os elementos do formulário em coluna */
+    gap: 15px; /* Espaçamento entre os campos */
+}
+
+.input-group {
+    position: relative; /* Para posicionar a mensagem de erro */
+    margin-bottom: 0; /* Removendo margin-bottom do input individual */
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 22px);
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: var(--font-code);
+}
+
+/* Estilo para erro de validação */
+.error-message {
+    color: var(--error-message-color);
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block; /* Garante que a mensagem ocupe sua própria linha */
+    height: 1.2em; /* Altura fixa para evitar pulos de layout */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.error-message.show {
+    opacity: 1;
+}
+
+/* Estilo para input com erro */
+input.error, textarea.error {
+    border-color: var(--error-message-color) !important;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Alinha botões à esquerda */
+    margin-top: 10px;
+}
+
+button {
+    background-color: var(--button-bg);
+    color: white; /* Cor do texto para botões primários */
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05em;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Espaçamento entre ícone e texto */
+}
+
+button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+button:active {
+    background-color: var(--button-active-bg);
+}
+
+button.secondary-btn {
+    background-color: var(--secondary-button-bg);
+    color: white; /* Cor do texto para botões secundários */
+}
+
+button.secondary-btn:hover {
+    background-color: var(--secondary-button-hover-bg);
+}
+
+button.secondary-btn:active {
+    background-color: var(--secondary-button-active-bg);
+}
+
+/* Estilos para o botão de salvar no modo de edição */
+button#savePromptBtn.edit-mode {
+    background-color: var(--edit-btn-bg); /* Mudar cor para indicar modo de edição */
+}
+button#savePromptBtn.edit-mode:hover {
+    background-color: var(--edit-btn-hover-bg);
+}
+button#savePromptBtn.edit-mode:active {
+    background-color: var(--edit-btn-active-bg);
+}
+
+/* --- Responsividade Básica --- */
+@media (max-width: 768px) {
+    .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Ajuste para botões de exportar/importar ficarem empilhados */
+    .data-management button {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .data-management button:last-child {
+        margin-bottom: 0;
+    }
+}

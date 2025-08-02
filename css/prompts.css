@@ -1,0 +1,238 @@
+/* painel-prompt/css/prompts.css */
+
+/* --- Barra de Busca --- */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.list-header h2 {
+    margin: 0; /* Reset de margem para o h2 dentro do header */
+    flex-grow: 1; /* Permite que o h2 ocupe espaço */
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1; /* Permite que o search bar ocupe espaço */
+    max-width: 350px; /* Limita a largura em telas maiores */
+    margin-left: 20px; /* Espaçamento do h2 */
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    width: auto; /* Anula o width 100% de cima para flexbox */
+    margin-bottom: 0; /* Remove a margem padrão */
+    padding-left: 40px; /* Espaço para o ícone de lupa */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 20px;
+}
+/* Altera a cor do SVG de busca dinamicamente com o tema */
+.search-bar input[type="text"] {
+    filter: var(--svg-icon-filter, none); /* Variável CSS para filtro SVG */
+}
+
+
+/* --- Estilos para a Lista de Prompts --- */
+#promptsContainer {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    min-height: 150px; /* Altura mínima para visualização */
+}
+
+.prompt-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Para botões de ação absolutos */
+
+    /* Drag and Drop */
+    cursor: grab;
+    user-select: none; /* Previne seleção de texto ao arrastar */
+}
+
+.prompt-card.dragging {
+    opacity: 0.5;
+    border: 2px dashed var(--button-bg);
+}
+
+
+.prompt-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--heading-color);
+    font-size: 1.4em;
+    word-wrap: break-word;
+}
+
+.prompt-card .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+    min-height: 25px; /* Para manter o layout mesmo sem tags */
+}
+
+.prompt-card .tag {
+    background-color: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: 600;
+    white-space: nowrap; /* Não quebra linha dentro da tag */
+}
+
+.prompt-card .prompt-content-display {
+    background-color: var(--pre-bg);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--pre-border);
+    white-space: pre-wrap; /* Mantém quebras de linha e envolve texto */
+    word-wrap: break-word;
+    font-size: 0.9em;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    color: var(--heading-color);
+    font-family: var(--font-code);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.prompt-card .prompt-content-display.markdown-rendered {
+    /* Estilos adicionais para o conteúdo Markdown renderizado, se necessário */
+    font-family: var(--font-body); /* Volta para fonte de corpo para markdown */
+    line-height: 1.5;
+}
+
+/* Botões de Ação no Card */
+.prompt-card .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px; /* Espaço do conteúdo */
+    flex-wrap: wrap;
+    gap: 8px; /* Espaçamento entre os botões */
+}
+
+.prompt-card .card-actions button {
+    padding: 8px 15px; /* Botões menores no card */
+    font-size: 0.95em;
+    margin-right: 0; /* Reseta a margem padrão do botão */
+}
+
+.prompt-card button.copy-btn {
+    background-color: var(--copy-btn-bg);
+    flex-grow: 1; /* Ocupa espaço disponível */
+    margin-top: 0; /* Reseta margin-top: auto */
+}
+
+.prompt-card button.copy-btn:hover {
+    background-color: var(--copy-btn-hover-bg);
+}
+
+.prompt-card button.copy-btn:active {
+    background-color: var(--copy-btn-active-bg);
+}
+
+.prompt-card button.edit-btn {
+    background-color: var(--edit-btn-bg);
+}
+
+.prompt-card button.edit-btn:hover {
+    background-color: var(--edit-btn-hover-bg);
+}
+
+.prompt-card button.edit-btn:active {
+    background-color: var(--edit-btn-active-bg);
+}
+
+.prompt-card button.delete-btn {
+    background-color: var(--delete-btn-bg);
+}
+
+.prompt-card button.delete-btn:hover {
+    background-color: var(--delete-btn-hover-bg);
+}
+
+.prompt-card button.delete-btn:active {
+    background-color: var(--delete-btn-active-bg);
+}
+
+.prompt-card .view-toggle {
+    background-color: var(--secondary-button-bg);
+    color: white; /* Cor do texto para botões secundários */
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-left: auto; /* Empurra para a direita */
+    transition: background-color 0.3s ease;
+}
+.prompt-card .view-toggle:hover {
+    background-color: var(--secondary-button-hover-bg);
+}
+
+
+/* --- Estilos para a Mensagem "Nenhum Prompt" --- */
+#noPromptsMessage {
+    text-align: center;
+    color: var(--no-prompts-text);
+    font-style: italic;
+    grid-column: 1 / -1;
+    padding: 20px;
+    border: 1px dashed var(--no-prompts-border);
+    border-radius: 8px;
+    background-color: var(--no-prompts-bg);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Responsividade Básica --- */
+@media (max-width: 768px) {
+    .list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .list-header h2 {
+        width: 100%; /* Ocupa a linha toda */
+        text-align: left;
+    }
+
+    .search-bar {
+        margin-left: 0; /* Remove margem lateral em telas pequenas */
+        max-width: 100%; /* Ocupa largura total */
+        width: 100%;
+    }
+
+    #promptsContainer {
+        grid-template-columns: 1fr;
+    }
+
+    .prompt-card .card-actions {
+        flex-direction: column;
+        align-items: stretch; /* Estica os botões para largura total */
+    }
+
+    .prompt-card .card-actions button,
+    .prompt-card .view-toggle {
+        width: 100%;
+        margin-left: 0;
+        text-align: center;
+        margin-top: 5px;
+    }
+}

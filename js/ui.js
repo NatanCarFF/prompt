@@ -6,12 +6,12 @@
 const ui = (function() {
     // Referências aos elementos do DOM
     const elements = {
-        promptIdInput: document.getElementById('promptId'), // Novo: Campo oculto para ID de edição
+        promptIdInput: document.getElementById('promptId'),
         promptTitleInput: document.getElementById('promptTitle'),
         promptContentTextarea: document.getElementById('promptContent'),
-        promptTagsInput: document.getElementById('promptTags'), // Novo: Campo de tags
+        promptTagsInput: document.getElementById('promptTags'),
         savePromptBtn: document.getElementById('savePromptBtn'),
-        cancelEditBtn: document.getElementById('cancelEditBtn'), // Novo: Botão de cancelar edição
+        cancelEditBtn: document.getElementById('cancelEditBtn'),
         promptsContainer: document.getElementById('promptsContainer'),
         noPromptsMessage: document.getElementById('noPromptsMessage'),
         exportDataBtn: document.getElementById('exportDataBtn'),
@@ -19,22 +19,29 @@ const ui = (function() {
         importDataBtn: document.getElementById('importDataBtn'),
         themeSelect: document.getElementById('themeSelect'),
         themeLink: document.getElementById('theme-link'),
-        searchPromptsInput: document.getElementById('searchPrompts'), // Novo: Campo de busca
-        feedbackMessage: document.getElementById('feedbackMessage'), // Novo: Mensagem de feedback global
+        searchPromptsInput: document.getElementById('searchPrompts'),
+        feedbackMessage: document.getElementById('feedbackMessage'),
 
         // Elementos de mensagem de erro do formulário
         titleError: document.getElementById('titleError'),
         contentError: document.getElementById('contentError'),
-        tagsError: document.getElementById('tagsError')
+        tagsError: document.getElementById('tagsError'),
+
+        // NOVOS ELEMENTOS DO MODAL DE CONFIRMAÇÃO
+        confirmationModalBackdrop: document.getElementById('confirmationModalBackdrop'),
+        confirmationMessage: document.getElementById('confirmationMessage'),
+        confirmYesBtn: document.getElementById('confirmYesBtn'),
+        confirmNoBtn: document.getElementById('confirmNoBtn')
     };
 
-    let prompts = []; // Array que armazenará os prompts atualmente carregados na UI
-    let currentDragTarget = null; // Para o recurso de arrastar e soltar
-    const THEME_STORAGE_KEY = 'prompt_panel_theme'; // Chave para armazenar o tema no Local Storage
-    const VIEW_MODE_STORAGE_KEY = 'prompt_panel_view_mode_'; // Prefixo para chave de modo de visualização por prompt
+    let prompts = [];
+    let currentDragTarget = null;
+    const THEME_STORAGE_KEY = 'prompt_panel_theme';
+    const VIEW_MODE_STORAGE_KEY = 'prompt_panel_view_mode_';
 
-    // Marcador para a biblioteca Marked.js
     let markedLoaded = false;
+    // Variáveis para resolver a Promise do modal de confirmação
+    let resolveConfirmationPromise;
 
     /**
      * Gera um ID único simples para um novo prompt.
@@ -51,16 +58,15 @@ const ui = (function() {
      */
     function showFeedbackMessage(message, type = 'info') {
         elements.feedbackMessage.textContent = message;
-        elements.feedbackMessage.className = 'feedback-message show'; // Reset classes
+        elements.feedbackMessage.className = 'feedback-message show';
         elements.feedbackMessage.classList.add(type);
 
         setTimeout(() => {
             elements.feedbackMessage.classList.remove('show');
-            // Remove as classes de tipo após a transição
             setTimeout(() => {
                 elements.feedbackMessage.className = 'feedback-message';
-            }, 500); // Espera a transição de opacidade terminar
-        }, 3000); // Mensagem some após 3 segundos
+            }, 500);
+        }, 3000);
     }
 
     /**
@@ -86,7 +92,7 @@ const ui = (function() {
             if (markedLoaded) {
                 return resolve();
             }
-            if (typeof marked !== 'undefined') { // Já carregada por script tag, talvez?
+            if (typeof marked !== 'undefined') {
                 markedLoaded = true;
                 return resolve();
             }
@@ -113,7 +119,7 @@ const ui = (function() {
         const currentMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY + promptId) || 'plain';
 
         if (currentMode === 'plain') {
-            await loadMarkedJs(); // Garante que Marked.js esteja carregado
+            await loadMarkedJs();
             if (typeof marked === 'undefined') {
                 showFeedbackMessage('Erro ao carregar renderizador de Markdown.', 'error');
                 return;
@@ -124,7 +130,7 @@ const ui = (function() {
             localStorage.setItem(VIEW_MODE_STORAGE_KEY + promptId, 'rendered');
             toggleButton.innerHTML = '<i class="icon-eye"></i> Visualizar Texto Puro';
         } else {
-            contentDisplayElement.textContent = content; // Volta para texto puro
+            contentDisplayElement.textContent = content;
             contentDisplayElement.classList.remove('markdown-rendered');
             contentDisplayElement.classList.add('plain-text');
             localStorage.setItem(VIEW_MODE_STORAGE_KEY + promptId, 'plain');
@@ -139,7 +145,6 @@ const ui = (function() {
     function validateForm() {
         let isValid = true;
 
-        // Validação do Título
         const title = elements.promptTitleInput.value.trim();
         if (!title) {
             elements.titleError.textContent = 'O título não pode estar vazio.';
@@ -157,7 +162,6 @@ const ui = (function() {
             elements.promptTitleInput.classList.remove('error');
         }
 
-        // Validação do Conteúdo
         const content = elements.promptContentTextarea.value.trim();
         if (!content) {
             elements.contentError.textContent = 'O conteúdo não pode estar vazio.';
@@ -175,9 +179,8 @@ const ui = (function() {
             elements.promptContentTextarea.classList.remove('error');
         }
 
-        // Validação das Tags (opcional, mas valida formato)
         const tags = elements.promptTagsInput.value.trim();
-        if (tags && !/^[a-zA-Z0-9À-ÖØ-öø-ÿ\s,#-_]+$/.test(tags)) { // Permite letras, números, espaços, #, -, _ e vírgulas
+        if (tags && !/^[a-zA-Z0-9À-ÖØ-öø-ÿ\s,#-_]+$/.test(tags)) {
             elements.tagsError.textContent = 'Tags contêm caracteres inválidos.';
             elements.tagsError.classList.add('show');
             elements.promptTagsInput.classList.add('error');
@@ -199,29 +202,26 @@ const ui = (function() {
     function createPromptCard(prompt) {
         const card = document.createElement('div');
         card.className = 'prompt-card';
-        card.dataset.id = prompt.id; // Armazena o ID no dataset para fácil referência
-        card.setAttribute('draggable', 'true'); // Torna o card arrastável
+        card.dataset.id = prompt.id;
+        card.setAttribute('draggable', 'true');
 
-        // Container para tags
         const tagsContainer = document.createElement('div');
         tagsContainer.className = 'tags-container';
         if (Array.isArray(prompt.tags) && prompt.tags.length > 0) {
             prompt.tags.forEach(tagText => {
                 const tagSpan = document.createElement('span');
                 tagSpan.className = 'tag';
-                tagSpan.textContent = `#${tagText.replace(/^#/, '')}`; // Garante # e remove se duplicado
+                tagSpan.textContent = `#${tagText.replace(/^#/, '')}`;
                 tagsContainer.appendChild(tagSpan);
             });
         } else {
-            tagsContainer.innerHTML = '&nbsp;'; // Espaço não-quebrável para manter o layout
+            tagsContainer.innerHTML = '&nbsp;';
         }
 
-        // Conteúdo do prompt (para alternar entre plain/rendered)
         const contentDisplay = document.createElement('pre');
         contentDisplay.className = 'prompt-content-display';
-        // Restaura o modo de visualização salvo ou define como texto puro
         const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY + prompt.id) || 'plain';
-        if (savedViewMode === 'rendered' && typeof marked !== 'undefined') { // Só renderiza se marked.js já estiver disponível
+        if (savedViewMode === 'rendered' && typeof marked !== 'undefined') {
             contentDisplay.innerHTML = marked.parse(prompt.content);
             contentDisplay.classList.add('markdown-rendered');
         } else {
@@ -232,10 +232,9 @@ const ui = (function() {
         card.innerHTML = `
             <h3>${prompt.title}</h3>
         `;
-        card.appendChild(tagsContainer); // Adiciona as tags
-        card.appendChild(contentDisplay); // Adiciona o display de conteúdo
+        card.appendChild(tagsContainer);
+        card.appendChild(contentDisplay);
 
-        // Botões de ação do card
         const cardActions = document.createElement('div');
         cardActions.className = 'card-actions';
 
@@ -243,7 +242,7 @@ const ui = (function() {
         copyButton.className = 'copy-btn';
         copyButton.innerHTML = '<i class="icon-copy"></i> Copiar';
         copyButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita acionar drag/drop ou edição se clicar no botão
+            e.stopPropagation();
             copyToClipboard(prompt.content);
         });
 
@@ -260,7 +259,17 @@ const ui = (function() {
         deleteButton.innerHTML = '<i class="icon-trash"></i> Excluir';
         deleteButton.addEventListener('click', (e) => {
             e.stopPropagation();
-            confirmAndDeletePrompt(prompt.id, prompt.title);
+            // CHAMA O NOVO MODAL DE CONFIRMAÇÃO
+            showConfirmationModal(`Tem certeza que deseja excluir o prompt "${prompt.title}"? Esta ação é irreversível!`)
+                .then(confirmed => {
+                    if (confirmed) {
+                        const updatedPrompts = storage.deletePrompt(prompt.id);
+                        renderPrompts(updatedPrompts, elements.searchPromptsInput.value.trim());
+                        showFeedbackMessage('Prompt excluído com sucesso!', 'success');
+                    } else {
+                        showFeedbackMessage('Exclusão cancelada.', 'info');
+                    }
+                });
         });
 
         const viewToggleButton = document.createElement('button');
@@ -278,10 +287,9 @@ const ui = (function() {
         cardActions.appendChild(copyButton);
         cardActions.appendChild(editButton);
         cardActions.appendChild(deleteButton);
-        cardActions.appendChild(viewToggleButton); // Adiciona o botão de alternância
+        cardActions.appendChild(viewToggleButton);
         card.appendChild(cardActions);
 
-        // Eventos de Drag and Drop
         card.addEventListener('dragstart', handleDragStart);
         card.addEventListener('dragover', handleDragOver);
         card.addEventListener('dragleave', handleDragLeave);
@@ -298,8 +306,8 @@ const ui = (function() {
      * @param {string} searchTerm - Termo de busca para filtrar.
      */
     function renderPrompts(currentPrompts, searchTerm = '') {
-        prompts = currentPrompts; // Atualiza a lista interna de prompts da UI
-        elements.promptsContainer.innerHTML = ''; // Limpa o container antes de renderizar
+        prompts = currentPrompts;
+        elements.promptsContainer.innerHTML = '';
 
         const filteredPrompts = prompts.filter(prompt => {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -329,7 +337,6 @@ const ui = (function() {
      */
     function addPromptToUI(newPrompt) {
         prompts.push(newPrompt);
-        // Re-renderiza para aplicar ordem e filtro, se houver
         renderPrompts(prompts, elements.searchPromptsInput.value.trim());
     }
 
@@ -345,14 +352,12 @@ const ui = (function() {
             elements.promptContentTextarea.value = promptToEdit.content;
             elements.promptTagsInput.value = Array.isArray(promptToEdit.tags) ? promptToEdit.tags.join(', ') : '';
 
-            // Muda o texto e estilo do botão de salvar para "Atualizar"
             elements.savePromptBtn.innerHTML = '<i class="icon-check"></i> Atualizar Prompt';
             elements.savePromptBtn.classList.add('edit-mode');
-            elements.cancelEditBtn.style.display = 'inline-block'; // Mostra o botão de cancelar
+            elements.cancelEditBtn.style.display = 'inline-block';
 
-            // Scrolla para o topo do formulário
             elements.promptTitleInput.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            elements.promptTitleInput.focus(); // Foca no campo de título
+            elements.promptTitleInput.focus();
         }
     }
 
@@ -360,16 +365,15 @@ const ui = (function() {
      * Limpa os campos de entrada do formulário e reverte para o modo de "salvar novo".
      */
     function clearForm() {
-        elements.promptIdInput.value = ''; // Limpa o ID oculto
+        elements.promptIdInput.value = '';
         elements.promptTitleInput.value = '';
         elements.promptContentTextarea.value = '';
         elements.promptTagsInput.value = '';
 
         elements.savePromptBtn.innerHTML = '<i class="icon-save"></i> Salvar Prompt';
         elements.savePromptBtn.classList.remove('edit-mode');
-        elements.cancelEditBtn.style.display = 'none'; // Esconde o botão de cancelar
+        elements.cancelEditBtn.style.display = 'none';
 
-        // Limpa mensagens de erro
         elements.titleError.textContent = '';
         elements.titleError.classList.remove('show');
         elements.promptTitleInput.classList.remove('error');
@@ -384,18 +388,27 @@ const ui = (function() {
     }
 
     /**
-     * Confirma e exclui um prompt.
-     * @param {string} promptId - O ID do prompt a ser excluído.
-     * @param {string} promptTitle - O título do prompt para a mensagem de confirmação.
+     * Exibe o modal de confirmação personalizado.
+     * @param {string} message - A mensagem a ser exibida no modal.
+     * @returns {Promise<boolean>} Uma Promise que resolve para true se o usuário confirmar, false caso contrário.
      */
-    function confirmAndDeletePrompt(promptId, promptTitle) {
-        if (confirm(`Tem certeza que deseja excluir o prompt "${promptTitle}"? Esta ação é irreversível!`)) {
-            const updatedPrompts = storage.deletePrompt(promptId);
-            renderPrompts(updatedPrompts, elements.searchPromptsInput.value.trim()); // Re-renderiza a lista
-            showFeedbackMessage('Prompt excluído com sucesso!', 'success');
-        } else {
-            showFeedbackMessage('Exclusão cancelada.', 'info');
-        }
+    function showConfirmationModal(message) {
+        return new Promise(resolve => {
+            elements.confirmationMessage.textContent = message;
+            elements.confirmationModalBackdrop.classList.add('show');
+            document.body.classList.add('modal-open'); // Adiciona classe para desabilitar scroll da página
+
+            // Define a função de resolução da Promise para os botões do modal
+            resolveConfirmationPromise = resolve;
+        });
+    }
+
+    /**
+     * Esconde o modal de confirmação.
+     */
+    function hideConfirmationModal() {
+        elements.confirmationModalBackdrop.classList.remove('show');
+        document.body.classList.remove('modal-open'); // Remove classe para habilitar scroll da página
     }
 
     /**
@@ -404,7 +417,6 @@ const ui = (function() {
      */
     function saveThemePreference(themeName) {
         localStorage.setItem(THEME_STORAGE_KEY, themeName);
-        // Atualiza o filtro do SVG de busca para o tema atual
         updateSearchIconColor(themeName);
     }
 
@@ -413,7 +425,7 @@ const ui = (function() {
      * @returns {string} O nome do tema salvo, ou 'light' como padrão.
      */
     function loadThemePreference() {
-        return localStorage.getItem(THEME_STORAGE_KEY) || 'light'; // 'light' como padrão
+        return localStorage.getItem(THEME_STORAGE_KEY) || 'light';
     }
 
     /**
@@ -423,18 +435,16 @@ const ui = (function() {
     function applyTheme(themeName) {
         const themePath = `css/themes/theme-${themeName}.css`;
         elements.themeLink.href = themePath;
-        elements.themeSelect.value = themeName; // Garante que o dropdown reflita o tema carregado
-        saveThemePreference(themeName); // Salva a preferência
+        elements.themeSelect.value = themeName;
+        saveThemePreference(themeName);
     }
 
     /**
      * Ajusta o filtro do ícone SVG de busca com base no tema.
-     * Isso é necessário porque o SVG é embutido via data URI.
-     * Poderíamos criar uma variável CSS para isso em :root.
      */
     function updateSearchIconColor(themeName) {
         const root = document.documentElement;
-        let filterValue = 'none'; // Default para temas claros
+        let filterValue = 'none';
 
         switch (themeName) {
             case 'dark':
@@ -445,19 +455,16 @@ const ui = (function() {
             case 'orange':
             case 'teal':
             case 'indigo':
-            case 'cyberpunk': // Esses temas têm fundos escuros
-                // Este filtro inverte as cores para que o ícone preto do SVG se torne branco
+            case 'cyberpunk':
                 filterValue = 'invert(1) hue-rotate(180deg) brightness(2)';
                 break;
-            case 'gold': // Ouro pode precisar de filtro diferente para texto escuro
-                filterValue = 'brightness(0.5)'; // Escurece o ícone para contraste em fundo dourado claro
-                break;
-            case 'pink': // Rosa claro pode precisar de filtro para texto escuro
-                filterValue = 'brightness(0.5)'; // Escurece o ícone para contraste em fundo rosa claro
+            case 'gold':
+            case 'pink':
+                filterValue = 'brightness(0.5)';
                 break;
             case 'light':
             default:
-                filterValue = 'none'; // Sem filtro para temas claros (ícone preto padrão)
+                filterValue = 'none';
                 break;
         }
         root.style.setProperty('--svg-icon-filter', filterValue);
@@ -465,56 +472,75 @@ const ui = (function() {
 
     // --- Drag and Drop Handlers ---
     function handleDragStart(e) {
-        currentDragTarget = e.target; // O card que está sendo arrastado
+        currentDragTarget = e.target;
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', e.target.dataset.id); // Transfere o ID do prompt
+        e.dataTransfer.setData('text/plain', e.target.dataset.id);
         setTimeout(() => {
-            e.target.classList.add('dragging'); // Adiciona classe 'dragging' após um pequeno delay
+            e.target.classList.add('dragging');
         }, 0);
     }
 
     function handleDragOver(e) {
-        e.preventDefault(); // Necessário para permitir o drop
+        e.preventDefault();
         if (e.target.closest('.prompt-card') && e.target.closest('.prompt-card') !== currentDragTarget) {
             const targetCard = e.target.closest('.prompt-card');
             const boundingBox = targetCard.getBoundingClientRect();
             const offset = boundingBox.y + (boundingBox.height / 2);
 
             if (e.clientY < offset) {
-                // Acima da metade superior, insere antes
                 elements.promptsContainer.insertBefore(currentDragTarget, targetCard);
             } else {
-                // Abaixo da metade inferior, insere depois
                 elements.promptsContainer.insertBefore(currentDragTarget, targetCard.nextSibling);
             }
         }
     }
 
     function handleDragLeave(e) {
-        // Nada a fazer aqui por enquanto
+        // Nada a fazer aqui
     }
 
     function handleDrop(e) {
         e.preventDefault();
-        // A lógica de reordenação já foi feita no dragover
+        // A lógica de reordenação já é feita no dragover
     }
 
     function handleDragEnd(e) {
         e.target.classList.remove('dragging');
         currentDragTarget = null;
 
-        // Salva a nova ordem no Local Storage
         const newOrder = Array.from(elements.promptsContainer.children)
-                              .filter(el => el.classList.contains('prompt-card')) // Garante que só cards sejam contados
+                              .filter(el => el.classList.contains('prompt-card'))
                               .map(card => card.dataset.id);
-        const reorderedPrompts = storage.reorderPrompts(newOrder);
-
-        // Opcional: Re-renderizar para garantir que os dados internos correspondam à UI
-        // renderPrompts(reorderedPrompts, elements.searchPromptsInput.value.trim());
-        // Se a reordenação visual já for boa, não precisa re-renderizar, apenas salvar.
+        storage.reorderPrompts(newOrder);
         showFeedbackMessage('Ordem dos prompts atualizada!', 'info');
     }
 
+    // --- Inicializa os event listeners do modal de confirmação ---
+    function initConfirmationModalListeners() {
+        elements.confirmYesBtn.addEventListener('click', () => {
+            hideConfirmationModal();
+            if (resolveConfirmationPromise) {
+                resolveConfirmationPromise(true); // Confirma a ação
+            }
+        });
+
+        elements.confirmNoBtn.addEventListener('click', () => {
+            hideConfirmationModal();
+            if (resolveConfirmationPromise) {
+                resolveConfirmationPromise(false); // Cancela a ação
+            }
+        });
+
+        // Clicar no backdrop também cancela (opcional, pode ser removido se preferir só botões)
+        elements.confirmationModalBackdrop.addEventListener('click', (e) => {
+            if (e.target === elements.confirmationModalBackdrop) {
+                hideConfirmationModal();
+                if (resolveConfirmationPromise) {
+                    resolveConfirmationPromise(false); // Cancela a ação
+                }
+            }
+        });
+    }
 
     // Retorna os elementos e funções públicas do módulo UI
     return {
@@ -526,9 +552,9 @@ const ui = (function() {
         showFeedbackMessage,
         applyTheme,
         loadThemePreference,
-        validateForm, // Novo: expõe a função de validação
-        editPrompt, // Novo: expõe a função de edição
-        confirmAndDeletePrompt, // Novo: expõe a função de exclusão
-        loadMarkedJs // Expõe para ser usado ao carregar o app
+        validateForm,
+        editPrompt,
+        loadMarkedJs,
+        initConfirmationModalListeners // EXPÕE PARA main.js
     };
 })();

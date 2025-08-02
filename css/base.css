@@ -1,0 +1,71 @@
+/* painel-prompt/css/base.css */
+
+/* --- Variáveis de Cor Padrão (Fallback) --- */
+/*
+   Estas variáveis definirão as cores padrão.
+   Elas serão sobrescritas pelos arquivos de tema específicos (ex: theme-dark.css, theme-light.css).
+   Caso um tema não carregue ou uma variável não seja definida nele, estas serão as cores fallback.
+*/
+:root {
+    --bg-color: #f4f7f6; /* Cor de fundo principal */
+    --container-bg: #ffffff; /* Cor de fundo do container */
+    --text-color: #333; /* Cor do texto principal */
+    --heading-color: #2c3e50; /* Cor dos títulos */
+    --border-color: #e0e0e0; /* Cor de bordas gerais */
+    --section-bg: #fdfdfd; /* Cor de fundo das seções */
+    --input-border: #ced4da; /* Cor da borda dos inputs */
+    --button-bg: #007bff; /* Cor de fundo dos botões primários */
+    --button-hover-bg: #0056b3; /* Cor de hover dos botões primários */
+    --button-active-bg: #004085; /* Cor de active dos botões primários */
+    --secondary-button-bg: #6c757d; /* Cor de fundo dos botões secundários */
+    --secondary-button-hover-bg: #5a6268;
+    --secondary-button-active-bg: #4c5257;
+    --card-bg: #ffffff; /* Cor de fundo dos cards de prompt */
+    --card-border: #dcdcdc; /* Cor da borda dos cards de prompt */
+    --card-shadow: rgba(0, 0, 0, 0.08); /* Sombra dos cards */
+    --pre-bg: #eaf1f7; /* Cor de fundo do bloco de código (pre) */
+    --pre-border: #d3e0ea; /* Cor da borda do bloco de código (pre) */
+    --copy-btn-bg: #28a745; /* Cor de fundo do botão de copiar */
+    --copy-btn-hover-bg: #218838; /* Cor de hover do botão de copiar */
+    --copy-btn-active-bg: #1e7e34; /* Cor de active do botão de copiar */
+    --edit-btn-bg: #ffc107; /* Cor de fundo do botão de editar */
+    --edit-btn-hover-bg: #e0a800;
+    --edit-btn-active-bg: #cc9900;
+    --delete-btn-bg: #dc3545; /* Cor de fundo do botão de deletar */
+    --delete-btn-hover-bg: #c82333;
+    --delete-btn-active-bg: #bd2130;
+    --no-prompts-text: #6c757d; /* Cor do texto "nenhum prompt" */
+    --no-prompts-border: #ced4da; /* Cor da borda da mensagem "nenhum prompt" */
+    --no-prompts-bg: #f8f9fa; /* Cor de fundo da mensagem "nenhum prompt" */
+    --feedback-info-bg: #333; /* Cor de fundo da mensagem de feedback info */
+    --feedback-info-text: white; /* Cor do texto da mensagem de feedback info */
+    --feedback-success-bg: #28a745; /* Cor de fundo da mensagem de feedback sucesso */
+    --feedback-success-text: white;
+    --feedback-error-bg: #dc3545; /* Cor de fundo da mensagem de feedback erro */
+    --feedback-error-text: white;
+    --error-message-color: #dc3545; /* Cor do texto de mensagem de erro de validação */
+    --tag-bg: #e2e6ea; /* Cor de fundo das tags */
+    --tag-text: #6c757d; /* Cor do texto das tags */
+
+    /* Variáveis para o Modal */
+    --modal-backdrop-bg: rgba(0, 0, 0, 0.6); /* Fundo escuro do modal */
+    --modal-content-bg: var(--container-bg); /* Fundo do balão do modal (usa cor do container) */
+    --modal-border: var(--border-color); /* Borda do balão do modal */
+    --modal-text-color: var(--text-color); /* Cor do texto do modal */
+}
+
+/* --- Estilos Gerais e Reset --- */
+body {
+    font-family: var(--font-body); /* Usando a variável de fonte do fonts.css */
+    margin: 0;
+    padding: 20px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para mudança de tema */
+}
+
+/* Classe para desabilitar o scroll da página quando um modal está aberto */
+body.modal-open {
+    overflow: hidden;
+}

@@ -1,0 +1,45 @@
+/* painel-prompt/css/utilities.css */
+
+/* --- Estilos para Feedback Visual (Global) --- */
+.feedback-message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--feedback-info-bg);
+    color: var(--feedback-info-text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+    z-index: 1000;
+}
+
+.feedback-message.show {
+    opacity: 1;
+}
+
+/* Estilos para tipos específicos de feedback */
+.feedback-message.success {
+    background-color: var(--feedback-success-bg);
+    color: var(--feedback-success-text);
+}
+
+.feedback-message.error {
+    background-color: var(--feedback-error-bg);
+    color: var(--feedback-error-text);
+}
+
+
+/* --- Estilos para a Mensagem "Nenhum Prompt" --- */
+#noPromptsMessage {
+    text-align: center;
+    color: var(--no-prompts-text);
+    font-style: italic;
+    grid-column: 1 / -1;
+    padding: 20px;
+    border: 1px dashed var(--no-prompts-border);
+    border-radius: 8px;
+    background-color: var(--no-prompts-bg);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}

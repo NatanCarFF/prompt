@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Engenharia de Prompt</title>
     <link rel="stylesheet" href="css/fonts.css">
-    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/prompts.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/utilities.css">
     <link id="theme-link" rel="stylesheet" href="css/themes/theme-light.css">
 </head>
 <body>
@@ -75,6 +81,15 @@
 
     <div class="feedback-message" id="feedbackMessage"></div>
 
+    <div class="custom-modal-backdrop" id="confirmationModalBackdrop">
+        <div class="custom-modal-content">
+            <p id="confirmationMessage">Tem certeza que deseja continuar?</p>
+            <div class="modal-buttons">
+                <button id="confirmYesBtn" class="delete-btn"><i class="icon-trash"></i> Sim, Excluir</button>
+                <button id="confirmNoBtn" class="secondary-btn"><i class="icon-times"></i> Não, Cancelar</button>
+            </div>
+        </div>
+    </div>
     <script src="js/storage.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
