@@ -1,0 +1,27 @@
+/* painel-prompt/css/themes/theme-gold.css */
+
+:root {
+    --bg-color: #2e2e2e;
+    --container-bg: #3d3d3d;
+    --text-color: #f0e68c; /* Dourado suave */
+    --heading-color: #ffd700; /* Ouro */
+    --border-color: #c0c0c0;
+    --section-bg: #4a4a4a;
+    --input-border: #8d8d8d;
+    --button-bg: #b8860b; /* Goldenrod */
+    --button-hover-bg: #a67909;
+    --button-active-bg: #8b6b07;
+    --card-bg: #4a4a4a;
+    --card-border: #6d6d6d;
+    --card-shadow: rgba(0, 0, 0, 0.3);
+    --pre-bg: #363636;
+    --pre-border: #525252;
+    --copy-btn-bg: #daa520; /* Goldenrod mais claro */
+    --copy-btn-hover-bg: #b8860b;
+    --copy-btn-active-bg: #a67909;
+    --no-prompts-text: #b0c4de;
+    --no-prompts-border: #8d8d8d;
+    --no-prompts-bg: #5a5a5a;
+    --feedback-bg: #DAA520;
+    --feedback-text: #333; /* Texto escuro para contraste */
+}

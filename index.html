@@ -4,35 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Engenharia de Prompt</title>
+    <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/style.css">
+    <link id="theme-link" rel="stylesheet" href="css/themes/theme-light.css">
 </head>
 <body>
     <div class="container">
-        <h1>Painel de Engenharia de Prompt</h1>
+        <div class="header">
+            <h1><i class="icon-sparkles"></i> Painel de Engenharia de Prompt</h1>
+            <div class="theme-selector">
+                <label for="themeSelect"><i class="icon-palette"></i> Tema:</label>
+                <select id="themeSelect">
+                    <option value="light">Claro Padrão</option>
+                    <option value="dark">Escuro Padrão</option>
+                    <option value="blue">Azul Ocaso</option>
+                    <option value="green">Verde Floresta</option>
+                    <option value="purple">Roxo Místico</option>
+                    <option value="red">Vermelho Quente</option>
+                    <option value="orange">Laranja Vibrante</option>
+                    <option value="teal">Verde-azulado Oceano</option>
+                    <option value="gold">Dourado Luxo</option>
+                    <option value="indigo">Índigo Profundo</option>
+                    <option value="pink">Rosa Delicado</option>
+                    <option value="cyberpunk">Cyberpunk Neon</option>
+                </select>
+            </div>
+        </div>
 
         <section class="prompt-form">
-            <h2>Salvar Novo Prompt</h2>
+            <h2><i class="icon-plus-circle"></i> Salvar Novo Prompt</h2>
             <input type="text" id="promptTitle" placeholder="Título do Prompt">
             <textarea id="promptContent" placeholder="Cole a estrutura do prompt aqui..."></textarea>
-            <button id="savePromptBtn">Salvar Prompt</button>
+            <button id="savePromptBtn"><i class="icon-save"></i> Salvar Prompt</button>
         </section>
 
         <section class="prompt-list">
-            <h2>Meus Prompts Salvos</h2>
+            <h2><i class="icon-list"></i> Meus Prompts Salvos</h2>
             <div id="promptsContainer">
-                <p id="noPromptsMessage">Nenhum prompt salvo ainda. Salve um prompt acima!</p>
+                <p id="noPromptsMessage"><i class="icon-info-circle"></i> Nenhum prompt salvo ainda. Salve um prompt acima!</p>
             </div>
         </section>
 
         <section class="data-management">
-            <h2>Gerenciamento de Dados</h2>
-            <button id="exportDataBtn">Exportar Dados (JSON)</button>
+            <h2><i class="icon-data-transfer"></i> Gerenciamento de Dados</h2>
+            <button id="exportDataBtn"><i class="icon-download"></i> Exportar Dados (JSON)</button>
             <input type="file" id="importFileInput" accept=".json" style="display: none;">
-            <button id="importDataBtn">Importar Dados (JSON)</button>
+            <button id="importDataBtn"><i class="icon-upload"></i> Importar Dados (JSON)</button>
         </section>
     </div>
 
-    <script src="js/storage.js"></script>
+    <div class="copied-message"></div> <script src="js/storage.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 </body>

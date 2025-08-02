@@ -1,0 +1,27 @@
+/* painel-prompt/css/themes/theme-cyberpunk.css */
+
+:root {
+    --bg-color: #1a002a; /* Fundo muito escuro */
+    --container-bg: #0c001f; /* Fundo do container ainda mais escuro */
+    --text-color: #00e6e6; /* Cian neon */
+    --heading-color: #ff00ff; /* Magenta neon */
+    --border-color: #6a008a; /* Roxo escuro */
+    --section-bg: #1f003e; /* Fundo de seção escuro */
+    --input-border: #330055; /* Borda de input roxa */
+    --button-bg: #00e6e6; /* Botão principal cian */
+    --button-hover-bg: #00a8a8;
+    --button-active-bg: #007d7d;
+    --card-bg: #1f003e;
+    --card-border: #6a008a;
+    --card-shadow: rgba(255, 0, 255, 0.3); /* Sombra magenta */
+    --pre-bg: #0c001f;
+    --pre-border: #330055;
+    --copy-btn-bg: #ff00ff; /* Botão de copiar magenta */
+    --copy-btn-hover-bg: #cc00cc;
+    --copy-btn-active-bg: #990099;
+    --no-prompts-text: #7d00b0;
+    --no-prompts-border: #330055;
+    --no-prompts-bg: #1a002a;
+    --feedback-bg: #00e6e6;
+    --feedback-text: #1a002a; /* Texto escuro para contraste */
+}

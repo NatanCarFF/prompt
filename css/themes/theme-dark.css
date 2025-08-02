@@ -1,0 +1,27 @@
+/* painel-prompt/css/themes/theme-dark.css */
+
+:root {
+    --bg-color: #2c3e50; /* Azul escuro */
+    --container-bg: #34495e; /* Azul mais escuro */
+    --text-color: #ecf0f1; /* Cinza claro */
+    --heading-color: #ffffff; /* Branco */
+    --border-color: #4a627d; /* Borda escura */
+    --section-bg: #3c5671; /* Fundo de seção escuro */
+    --input-border: #5a7a97; /* Borda de input escura */
+    --button-bg: #3498db; /* Azul primário */
+    --button-hover-bg: #2980b9;
+    --button-active-bg: #2173a1;
+    --card-bg: #3c5671; /* Fundo de card escuro */
+    --card-border: #4a627d;
+    --card-shadow: rgba(0, 0, 0, 0.25);
+    --pre-bg: #2a3b4c; /* Fundo de código escuro */
+    --pre-border: #3d5063;
+    --copy-btn-bg: #27ae60; /* Verde escuro */
+    --copy-btn-hover-bg: #229954;
+    --copy-btn-active-bg: #1e8449;
+    --no-prompts-text: #bdc3c7;
+    --no-prompts-border: #5a7a97;
+    --no-prompts-bg: #3e5870;
+    --feedback-bg: #555;
+    --feedback-text: white;
+}

@@ -1,0 +1,27 @@
+/* painel-prompt/css/themes/theme-blue.css */
+
+:root {
+    --bg-color: #0d1b2a;
+    --container-bg: #1b263b;
+    --text-color: #e0e1dd;
+    --heading-color: #adcbe3;
+    --border-color: #415a77;
+    --section-bg: #2a3c58;
+    --input-border: #6d8ba9;
+    --button-bg: #778da9;
+    --button-hover-bg: #5c6b81;
+    --button-active-bg: #4a576b;
+    --card-bg: #2a3c58;
+    --card-border: #415a77;
+    --card-shadow: rgba(0, 0, 0, 0.2);
+    --pre-bg: #1e2a3c;
+    --pre-border: #334d6e;
+    --copy-btn-bg: #a6b3be;
+    --copy-btn-hover-bg: #8d9da8;
+    --copy-btn-active-bg: #7a8a95;
+    --no-prompts-text: #9bb2c8;
+    --no-prompts-border: #6d8ba9;
+    --no-prompts-bg: #374a63;
+    --feedback-bg: #3d5063;
+    --feedback-text: #ffffff;
+}

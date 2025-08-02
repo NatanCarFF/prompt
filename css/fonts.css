@@ -1,0 +1,98 @@
+/* painel-prompt/css/fonts.css */
+
+/* --- Importação de Fontes --- */
+/* Exemplo de importação do Google Fonts: 'Poppins' para texto e 'JetBrains Mono' para código. */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+
+/* Define as variáveis CSS para as fontes, facilitando o uso em style.css */
+:root {
+    --font-body: 'Poppins', sans-serif;
+    --font-code: 'JetBrains Mono', monospace;
+}
+
+/* --- Ícones Personalizados (Simulação) --- */
+/*
+   Para este projeto, vamos simular ícones usando um método simples.
+   Em um projeto real, você usaria uma biblioteca de ícones como Font Awesome,
+   Material Icons ou criar sua própria fonte de ícones.
+
+   Aqui, estamos usando uma abordagem que permite definir um "ícone"
+   através de um pseudo-elemento ::before e um `content` com um caractere
+   ou código unicode que se assemelhe a um ícone.
+   Isso evita a necessidade de baixar e configurar bibliotecas completas de ícones
+   neste exemplo.
+*/
+
+[class^="icon-"], [class*=" icon-"] {
+    /* Estilos base para todos os ícones */
+    font-family: 'FontAwesomeMock', sans-serif; /* Usaremos uma família de fontes que não existe, apenas para demonstração */
+    font-weight: 900; /* Para simular o estilo de ícones Font Awesome solid */
+    font-style: normal;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-right: 8px; /* Espaçamento entre o ícone e o texto */
+}
+
+/* --- Definições de Ícones Específicos --- */
+/* Usamos códigos Unicode simples para simular ícones.
+   Em uma biblioteca real, seriam códigos específicos para cada ícone.
+   Estes são apenas para fins de demonstração visual no projeto. */
+
+.icon-sparkles::before {
+    content: '\2728'; /* Sparkles */
+    font-size: 1.1em;
+}
+
+.icon-palette::before {
+    content: '\1F3A8'; /* Art Palette */
+    font-size: 1.1em;
+}
+
+.icon-plus-circle::before {
+    content: '\2795'; /* Plus Sign */
+    font-size: 1.1em;
+}
+
+.icon-save::before {
+    content: '\1F4BE'; /* Floppy Disk */
+    font-size: 1.1em;
+}
+
+.icon-list::before {
+    content: '\1F4CB'; /* Clipboard */
+    font-size: 1.1em;
+}
+
+.icon-info-circle::before {
+    content: '\2139'; /* Information Source */
+    font-size: 1.1em;
+}
+
+.icon-data-transfer::before {
+    content: '\1F504'; /* Anticlockwise Arrows Button (Refresh/Transfer) */
+    font-size: 1.1em;
+}
+
+.icon-download::before {
+    content: '\2B07'; /* Southwards Black Arrow */
+    font-size: 1.1em;
+}
+
+.icon-upload::before {
+    content: '\2B06'; /* Northwards Black Arrow */
+    font-size: 1.1em;
+}
+
+.icon-copy::before {
+    content: '\1F4C4'; /* Page facing up */
+    font-size: 1.1em;
+}
+
+/* Ajustes para o tamanho dos ícones em botões */
+button [class^="icon-"], button [class*=" icon-"] {
+    margin-right: 5px; /* Menor espaçamento em botões */
+    font-size: 1em; /* Tamanho padrão */
+}

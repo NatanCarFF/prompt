@@ -1,71 +1,166 @@
 /* painel-prompt/css/style.css */
 
-/* Reset básico e estilos gerais */
+/* --- Variáveis de Cor Padrão (Fallback) --- */
+/*
+   Estas variáveis definirão as cores padrão.
+   Elas serão sobrescritas pelos arquivos de tema específicos (ex: theme-dark.css, theme-light.css).
+   Caso um tema não carregue ou uma variável não seja definida nele, estas serão as cores fallback.
+*/
+:root {
+    --bg-color: #f4f7f6; /* Cor de fundo principal */
+    --container-bg: #ffffff; /* Cor de fundo do container */
+    --text-color: #333; /* Cor do texto principal */
+    --heading-color: #2c3e50; /* Cor dos títulos */
+    --border-color: #e0e0e0; /* Cor de bordas gerais */
+    --section-bg: #fdfdfd; /* Cor de fundo das seções */
+    --input-border: #ced4da; /* Cor da borda dos inputs */
+    --button-bg: #007bff; /* Cor de fundo dos botões primários */
+    --button-hover-bg: #0056b3; /* Cor de hover dos botões primários */
+    --button-active-bg: #004085; /* Cor de active dos botões primários */
+    --card-bg: #ffffff; /* Cor de fundo dos cards de prompt */
+    --card-border: #dcdcdc; /* Cor da borda dos cards de prompt */
+    --card-shadow: rgba(0, 0, 0, 0.06); /* Sombra dos cards */
+    --pre-bg: #eaf1f7; /* Cor de fundo do bloco de código (pre) */
+    --pre-border: #d3e0ea; /* Cor da borda do bloco de código (pre) */
+    --copy-btn-bg: #28a745; /* Cor de fundo do botão de copiar */
+    --copy-btn-hover-bg: #218838; /* Cor de hover do botão de copiar */
+    --copy-btn-active-bg: #1e7e34; /* Cor de active do botão de copiar */
+    --no-prompts-text: #6c757d; /* Cor do texto "nenhum prompt" */
+    --no-prompts-border: #ced4da; /* Cor da borda da mensagem "nenhum prompt" */
+    --no-prompts-bg: #f8f9fa; /* Cor de fundo da mensagem "nenhum prompt" */
+    --feedback-bg: #333; /* Cor de fundo da mensagem de feedback */
+    --feedback-text: white; /* Cor do texto da mensagem de feedback */
+}
+
+
+/* --- Estilos Gerais e Reset --- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-body); /* Usando a variável de fonte do fonts.css */
     margin: 0;
     padding: 20px;
-    background-color: #f4f7f6;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para mudança de tema */
 }
 
 .container {
     max-width: 900px;
     margin: 30px auto;
-    background-color: #ffffff;
+    background-color: var(--container-bg);
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 20px var(--card-shadow);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transição suave */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
 }
 
 h1, h2 {
-    color: #2c3e50;
+    color: var(--heading-color);
     text-align: center;
-    margin-bottom: 25px;
     font-weight: 600;
 }
 
 h1 {
     font-size: 2.5em;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 15px;
-    margin-bottom: 40px;
+    padding-bottom: 0; /* Removido padding bottom para ficar junto ao border bottom do header */
+    margin-bottom: 0; /* Removido margin bottom para ficar junto ao border bottom do header */
+    flex-grow: 1; /* Ocupa o espaço disponível */
 }
 
 h2 {
     font-size: 1.8em;
     margin-top: 40px;
+    margin-bottom: 25px;
+    text-align: left; /* Alinhamento para títulos de seção */
 }
 
-/* Estilos para formulários e inputs */
+/* --- Seleção de Tema --- */
+.theme-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px; /* Espaço em telas menores */
+}
+
+.theme-selector label {
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+.theme-selector select {
+    padding: 8px 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    font-size: 0.95em;
+    cursor: pointer;
+    appearance: none; /* Remove a seta padrão do select */
+    -webkit-appearance: none; /* Para Webkit browsers */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Seta customizada */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-selector select:focus {
+    outline: none;
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+
+/* --- Estilos para Formulários e Inputs --- */
 section {
     margin-bottom: 30px;
     padding: 20px;
-    background-color: #fdfdfd;
+    background-color: var(--section-bg);
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 input[type="text"],
 textarea {
-    width: calc(100% - 22px); /* Considerando padding e border */
+    width: calc(100% - 22px);
     padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     font-size: 1em;
-    box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+    box-sizing: border-box;
+    background-color: var(--container-bg); /* Input bg color */
+    color: var(--text-color); /* Input text color */
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 textarea {
     min-height: 120px;
     resize: vertical;
+    font-family: var(--font-code); /* Fonte monoespaçada para o conteúdo do prompt */
 }
 
 button {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--button-bg);
+    color: var(--feedback-text); /* Cor do texto do botão (geralmente branco) */
     padding: 12px 25px;
     border: none;
     border-radius: 6px;
@@ -76,14 +171,14 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: var(--button-hover-bg);
 }
 
 button:active {
-    background-color: #004085;
+    background-color: var(--button-active-bg);
 }
 
-/* Estilos para a lista de prompts */
+/* --- Estilos para a Lista de Prompts --- */
 #promptsContainer {
     display: grid;
     gap: 20px;
@@ -91,76 +186,80 @@ button:active {
 }
 
 .prompt-card {
-    background-color: #ffffff;
-    border: 1px solid #dcdcdc;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px var(--card-shadow);
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Para espaçar título/conteúdo do botão */
+    justify-content: space-between;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .prompt-card h3 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #34495e;
+    color: var(--heading-color);
     font-size: 1.4em;
-    word-wrap: break-word; /* Quebra palavras longas */
+    word-wrap: break-word;
 }
 
 .prompt-card pre {
-    background-color: #eaf1f7;
+    background-color: var(--pre-bg);
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #d3e0ea;
-    white-space: pre-wrap; /* Mantém quebras de linha e envolve texto */
+    border: 1px solid var(--pre-border);
+    white-space: pre-wrap;
     word-wrap: break-word;
     font-size: 0.9em;
-    max-height: 200px; /* Limita a altura do prompt */
-    overflow-y: auto; /* Adiciona scroll se o conteúdo for muito grande */
+    max-height: 200px;
+    overflow-y: auto;
     margin-bottom: 15px;
-    color: #2c3e50;
+    color: var(--heading-color); /* Usando heading-color para o texto de código */
+    font-family: var(--font-code); /* Fonte monoespaçada para o conteúdo do prompt */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .prompt-card button.copy-btn {
-    background-color: #28a745;
-    margin-top: auto; /* Empurra o botão para baixo */
-    align-self: flex-start; /* Alinha o botão à esquerda dentro do card */
+    background-color: var(--copy-btn-bg);
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .prompt-card button.copy-btn:hover {
-    background-color: #218838;
+    background-color: var(--copy-btn-hover-bg);
 }
 
 .prompt-card button.copy-btn:active {
-    background-color: #1e7e34;
+    background-color: var(--copy-btn-active-bg);
 }
 
-/* Estilos para a mensagem de "nenhum prompt" */
+/* --- Estilos para a Mensagem "Nenhum Prompt" --- */
 #noPromptsMessage {
     text-align: center;
-    color: #6c757d;
+    color: var(--no-prompts-text);
     font-style: italic;
-    grid-column: 1 / -1; /* Ocupa todas as colunas no grid */
+    grid-column: 1 / -1;
     padding: 20px;
-    border: 1px dashed #ced4da;
+    border: 1px dashed var(--no-prompts-border);
     border-radius: 8px;
-    background-color: #f8f9fa;
+    background-color: var(--no-prompts-bg);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-/* Estilos para feedback visual (Ex: "Copiado!") */
+/* --- Estilos para Feedback Visual (Ex: "Copiado!") --- */
 .copied-message {
     position: fixed;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #333;
-    color: white;
+    background-color: var(--feedback-bg);
+    color: var(--feedback-text);
     padding: 10px 20px;
     border-radius: 8px;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out, background-color 0.3s ease, color 0.3s ease;
     z-index: 1000;
 }
 
@@ -168,16 +267,34 @@ button:active {
     opacity: 1;
 }
 
-/* Responsividade básica */
+/* --- Responsividade Básica --- */
 @media (max-width: 768px) {
     .container {
         margin: 15px auto;
         padding: 20px;
     }
 
+    .header {
+        flex-direction: column;
+        align-items: flex-start; /* Alinha itens à esquerda em telas menores */
+    }
+
+    .header h1 {
+        text-align: left; /* Alinha título à esquerda */
+        margin-bottom: 15px; /* Adiciona espaço abaixo do título */
+    }
+
+    .theme-selector {
+        width: 100%; /* Ocupa largura total */
+        justify-content: flex-start; /* Alinha à esquerda */
+    }
+
+    .theme-selector select {
+        flex-grow: 1; /* Ocupa o espaço restante */
+    }
+
     h1 {
         font-size: 2em;
-        margin-bottom: 30px;
     }
 
     h2 {
@@ -188,15 +305,26 @@ button:active {
     button {
         width: 100%;
         margin-bottom: 10px;
+        margin-right: 0; /* Remove margem direita em botões full-width */
     }
 
+    /* Ajuste para botões de exportar/importar ficarem empilhados */
+    .data-management button {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .data-management button:last-child {
+        margin-bottom: 0;
+    }
+
+
     #promptsContainer {
-        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        grid-template-columns: 1fr;
     }
 
     .prompt-card button.copy-btn {
-        width: auto; /* Reset para não ocupar 100% no card */
-        align-self: center; /* Centraliza o botão no card */
+        width: auto;
+        align-self: center;
     }
 }
 

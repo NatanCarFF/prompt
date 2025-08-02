@@ -13,10 +13,13 @@ const ui = (function() {
         noPromptsMessage: document.getElementById('noPromptsMessage'),
         exportDataBtn: document.getElementById('exportDataBtn'),
         importFileInput: document.getElementById('importFileInput'),
-        importDataBtn: document.getElementById('importDataBtn')
+        importDataBtn: document.getElementById('importDataBtn'),
+        themeSelect: document.getElementById('themeSelect'), // Novo: Seletor de tema
+        themeLink: document.getElementById('theme-link') // Novo: Link para o CSS do tema
     };
 
     let prompts = []; // Array que armazenará os prompts atualmente carregados na UI
+    const THEME_STORAGE_KEY = 'prompt_panel_theme'; // Chave para armazenar o tema no Local Storage
 
     /**
      * Gera um ID único simples para um novo prompt.
@@ -39,10 +42,14 @@ const ui = (function() {
             document.body.appendChild(feedbackDiv);
         }
         feedbackDiv.textContent = message;
-        feedbackDiv.classList.add('show');
+        // Adiciona classe base e classes de tipo (se aplicável, para futuros estilos)
+        feedbackDiv.className = 'copied-message show';
+        feedbackDiv.classList.add(type);
 
         setTimeout(() => {
             feedbackDiv.classList.remove('show');
+            // Remove classes de tipo após a transição, se necessário
+            feedbackDiv.classList.remove(type);
         }, 2000); // Mensagem some após 2 segundos
     }
 
@@ -53,19 +60,16 @@ const ui = (function() {
     async function copyToClipboard(text) {
         try {
             await navigator.clipboard.writeText(text);
-            showFeedbackMessage('Prompt Copiado!');
+            showFeedbackMessage('Prompt Copiado!', 'success');
         } catch (err) {
             console.error('Erro ao copiar: ', err);
-            showFeedbackMessage('Falha ao copiar.');
+            showFeedbackMessage('Falha ao copiar.', 'error');
         }
     }
 
     /**
      * Cria e retorna um elemento HTML para um único prompt.
      * @param {object} prompt - O objeto prompt a ser renderizado.
-     * @param {string} prompt.id - ID único do prompt.
-     * @param {string} prompt.title - Título do prompt.
-     * @param {string} prompt.content - Conteúdo do prompt.
      * @returns {HTMLElement} O elemento div do card do prompt.
      */
     function createPromptCard(prompt) {
@@ -76,7 +80,7 @@ const ui = (function() {
         card.innerHTML = `
             <h3>${prompt.title}</h3>
             <pre>${prompt.content}</pre>
-            <button class="copy-btn">Copiar Prompt</button>
+            <button class="copy-btn"><i class="icon-copy"></i> Copiar Prompt</button>
         `;
 
         // Adiciona evento de clique ao botão de copiar
@@ -124,14 +128,41 @@ const ui = (function() {
     }
 
     /**
-     * Retorna os elementos e funções públicas do módulo UI.
+     * Salva o tema atual selecionado no Local Storage.
+     * @param {string} themeName - O nome do tema a ser salvo (ex: 'dark', 'light').
      */
+    function saveThemePreference(themeName) {
+        localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    }
+
+    /**
+     * Carrega a preferência de tema do Local Storage.
+     * @returns {string} O nome do tema salvo, ou 'light' como padrão.
+     */
+    function loadThemePreference() {
+        return localStorage.getItem(THEME_STORAGE_KEY) || 'light'; // 'light' como padrão
+    }
+
+    /**
+     * Aplica o tema selecionado ao alterar o src do link CSS.
+     * @param {string} themeName - O nome do tema (ex: 'dark', 'blue').
+     */
+    function applyTheme(themeName) {
+        const themePath = `css/themes/theme-${themeName}.css`;
+        elements.themeLink.href = themePath;
+        elements.themeSelect.value = themeName; // Garante que o dropdown reflita o tema carregado
+        saveThemePreference(themeName); // Salva a preferência
+    }
+
+    // Retorna os elementos e funções públicas do módulo UI
     return {
         elements,
         renderPrompts,
         addPromptToUI,
         clearForm,
-        generateUniqueId, // Exposto para o main.js usar ao criar um novo prompt
-        showFeedbackMessage // Exposto para o main.js usar para feedback de import/export
+        generateUniqueId,
+        showFeedbackMessage,
+        applyTheme,         // Novo: Função para aplicar tema
+        loadThemePreference // Novo: Função para carregar tema
     };
 })();

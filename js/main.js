@@ -2,10 +2,15 @@
 
 /**
  * Módulo principal da aplicação, responsável por inicializar
- * e coordenar a interação entre a UI e o armazenamento de dados.
+ * e coordenar a interação entre a UI e o armazenamento de dados,
+ * incluindo o gerenciamento de temas.
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega os prompts existentes e os renderiza na UI ao iniciar
+    // --- Inicialização do Tema ---
+    const savedTheme = ui.loadThemePreference();
+    ui.applyTheme(savedTheme); // Aplica o tema salvo (ou 'light' como padrão) ao carregar a página
+
+    // --- Carregamento e Renderização Inicial dos Prompts ---
     let prompts = storage.loadPrompts();
     ui.renderPrompts(prompts);
 
@@ -27,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             storage.savePrompts(prompts); // Salva o array atualizado no Local Storage
             ui.addPromptToUI(newPrompt); // Adiciona e renderiza o novo prompt na UI
             ui.clearForm(); // Limpa os campos do formulário
-            ui.showFeedbackMessage('Prompt salvo com sucesso!');
+            ui.showFeedbackMessage('Prompt salvo com sucesso!', 'success');
         } else {
             ui.showFeedbackMessage('Por favor, preencha o título e o conteúdo do prompt.', 'error');
         }
@@ -36,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Evento para exportar os dados
     ui.elements.exportDataBtn.addEventListener('click', () => {
         storage.exportData();
-        ui.showFeedbackMessage('Dados exportados como prompts_export.json!');
+        ui.showFeedbackMessage('Dados exportados como prompts_export.json!', 'success');
     });
 
     // Evento para importar dados (aciona o clique no input de arquivo oculto)
@@ -52,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(importedPrompts => {
                     prompts = importedPrompts; // Atualiza o array local com os prompts importados
                     ui.renderPrompts(prompts); // Re-renderiza a UI com os novos prompts
-                    ui.showFeedbackMessage('Dados importados com sucesso!');
+                    ui.showFeedbackMessage('Dados importados com sucesso!', 'success');
                 })
                 .catch(error => {
                     console.error("Erro na importação:", error);
@@ -61,5 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Limpa o valor do input file para permitir que o mesmo arquivo seja selecionado novamente
         event.target.value = '';
+    });
+
+    // --- Novo Event Listener para Troca de Tema ---
+    ui.elements.themeSelect.addEventListener('change', (event) => {
+        const selectedTheme = event.target.value;
+        ui.applyTheme(selectedTheme); // Aplica o novo tema escolhido
+        ui.showFeedbackMessage(`Tema "${selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)}" aplicado!`);
     });
 });
